@@ -1,0 +1,94 @@
+{
+	"name": "vscode-python-typehint",
+	"displayName": "Python Type Hint",
+	"version": "1.4.1",
+	"publisher": "njqdev",
+	"description": "Type hint completion for Python.",
+	"icon": "images/icon.png",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/njqdev/vscode-python-typehint"
+	},
+	"license": "MIT",
+	"categories": [
+		"Programming Languages"
+	],
+	"keywords": [
+		"Python",
+		"typehint",
+		"completion",
+		"autocompletion",
+		"parameter"
+	],
+	"engines": {
+		"vscode": "^1.48.0"
+	},
+	"activationEvents": [
+		"*"
+	],
+	"main": "./dist/extension",
+	"contributes": {
+		"commands": [
+			{
+				"command": "typehint.infer",
+				"title": "TypeHint: Infer type hints"
+			}
+		],
+		"languages": [
+			{
+				"id": "python",
+				"aliases": [
+					"Python"
+				],
+				"extensions": [
+					".py"
+				]
+			}
+		],
+		"configuration": {
+			"title": "Python Type Hint",
+			"properties": {
+				"workspace.searchEnabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "If enabled, other files in the workspace are searched when estimating types for a parameter. Disabling this will increase performance, but may reduce estimation accuracy."
+				},
+				"workspace.searchLimit": {
+					"type": "number",
+					"default": 10,
+					"description": "The maximum number of files searched in a workspace search. Has no effect if workspace searching is disabled."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"package": "vsce package",
+		"publish": "vsce publish",
+		"vscode:prepublish": "webpack --mode production",
+		"compile": "webpack --mode none",
+		"watch": "webpack --mode none --watch",
+		"postinstall": "node node_modules/vscode/bin/install",
+		"just-test": "node node_modules/vscode/bin/test",
+		"test-compile": "tsc -p ./ && npm run compile",
+		"test": "npm run test-compile && node node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^7.0.1",
+		"@types/node": "^12.12.54",
+		"@types/vscode": "^1.48.0",
+		"@typescript-eslint/eslint-plugin": "^2.34.0",
+		"@typescript-eslint/parser": "^2.34.0",
+		"eslint": "^6.8.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.2.0",
+		"ts-loader": "^6.2.2",
+		"typescript": "^3.9.7",
+		"vscode-test": "^1.4.0",
+		"webpack": "^4.44.1",
+		"webpack-cli": "^3.3.12"
+	},
+	"dependencies": {
+		"vscode": "^1.1.37"
+	}
+}

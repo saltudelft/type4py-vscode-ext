@@ -1,0 +1,16 @@
+// Overwrite default and user settings.
+{
+    "files.exclude": {
+        "out": false // do not hide the "out" folder with the compiled JS files
+    },
+    "search.exclude": {
+        "out": true // exclude "out" folder in search results
+    },
+    // Turn off tsc task auto detection since we have the necessary tasks as npm scripts
+    "typescript.tsc.autoDetect": "off",
+    "[typescript]": {
+        "editor.rulers": [
+            120
+        ]
+    }
+}

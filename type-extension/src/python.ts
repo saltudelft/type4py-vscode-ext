@@ -83,11 +83,77 @@ const typeCategories: { [key: string]: TypeCategory } = {
     tuple: TypeCategory.Collection
 };
 
+/** API DATA TYPES */
+
+export interface InferApiData {
+    funcs: Array<InferApiFunction>
+    // TODO: classes
+    // TODO: variables?
+}
+
+export type InferApiParamData = [string, number]
+
+export interface InferApiFunction {
+    fn_lc: Array<Array<number>>,
+    name: string,
+    params: { [key: string]: string }
+    params_p: {
+        [key: string]: Array<InferApiParamData>
+    },
+    ret_type_p: Array<InferApiParamData>
+    // TODO: variables
+}
+
+/** EXTENSION DATA TYPES */
+
 /**
  * Data type for function inference data.
  */
-export interface FunctionInferData {
-    line: number // TODO: line should be an interval to support ranges.
-    return_types: Array<string>
-    params: {[key: string]: Array<string>}
+ export interface FunctionInferData {
+    /** Tuple: first & last line of function */
+    lines: [number, number]
+
+    /** Ordered array of return type annotations */
+    returnTypes: Array<string>
+
+    /** Parameter mapping: parameter -> annotations */
+    params: {
+        /** Ordered array of parameter type annotations */
+        [key: string]: Array<string>
+    }
+}
+
+export interface InferData {
+    functions: Array<FunctionInferData>
+}
+
+export function transformInferApiData(apiData: InferApiData): InferData {
+    const functionInferData: Array<FunctionInferData> = []
+
+    for (const func of apiData.funcs) {
+        // Assume: already sorted by value. Extract keys
+        const returnTypes = func.ret_type_p.map(retParam => {
+            return retParam[0]
+        })
+        
+        const paramTypes: { [key: string]: Array<string> } = {}
+
+        for (const param of Object.keys(func.params_p)) {
+            paramTypes[param] = func.params_p[param].map(annotation => {
+                return annotation[0]
+            })
+        }
+
+        const funcEntry: FunctionInferData = {
+            lines: [func.fn_lc[0][0], func.fn_lc[1][0]],
+            returnTypes: returnTypes,
+            params: paramTypes
+        }
+
+        functionInferData.push(funcEntry);
+    }
+
+    return {
+        functions: functionInferData
+    }
 }

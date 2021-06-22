@@ -1,14 +1,15 @@
-import { FunctionInferData } from "./python";
+import { FunctionInferData, InferData } from "./python";
 
 /**
  * Data container to allow inserting and fetching type data.
  * The container maps filepaths to their associated annotation data.
  */
 class TypeStore {
-    private dataMap: Map<string, Array<FunctionInferData>>
+    /** Data map: filepath -> inference data */
+    private dataMap: Map<string, InferData>
 
     constructor() {
-        this.dataMap = new Map()
+        this.dataMap = new Map();
     }
 
     /**
@@ -16,8 +17,8 @@ class TypeStore {
      * @param key Key of filepath
      * @param value Function inference data
      */
-    add(key: string, value: Array<FunctionInferData>): void {
-        this.dataMap.set(key, value)
+    add(key: string, value: InferData): void {
+        this.dataMap.set(key, value);
     }
 
     /**
@@ -25,8 +26,8 @@ class TypeStore {
      * @param key Key of filepath
      * @returns Value mapped by filepath
      */
-    get(key: string): Array<FunctionInferData> | undefined {
-        return this.dataMap.get(key)
+    get(key: string): InferData | undefined {
+        return this.dataMap.get(key);
     }
 }
 

@@ -215,9 +215,9 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
             const inferData = findFunctionInferenceDataForActiveFilePos(pos);
             
             if (inferData) {
-                for (let i = 0; i < inferData.return_types.length; ++i) {
+                for (let i = 0; i < inferData.returnTypes.length; ++i) {
                     const item = new CompletionItem(
-                        inferData.return_types[i],
+                        inferData.returnTypes[i],
                         CompletionItemKind.TypeParameter
                     );
                     item.sortText = `${i}`;
@@ -265,10 +265,13 @@ function findFunctionInferenceDataForActiveFilePos(pos: Position): FunctionInfer
         const annotationData = typestore.get(activePath);
 
         if (annotationData) {
+            // Rebase to 1-index
+            const lineNumber = pos.line + 1;
+
             // Find line
-            for (let x of annotationData) {
-                if (x['line'] - 1 == pos.line) {
-                    return x
+            for (let x of annotationData.functions) {
+                if (lineNumber >= x['lines'][0] && lineNumber <= x['lines'][1]) {
+                    return x;
                 }
             }
         }

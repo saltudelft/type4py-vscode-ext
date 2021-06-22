@@ -91,7 +91,7 @@ export interface InferApiData {
     // TODO: variables?
 }
 
-export type InferApiParamData = [string, number]
+export type InferApiParamData = [string, number];
 
 export interface InferApiFunction {
     fn_lc: Array<Array<number>>,
@@ -128,32 +128,32 @@ export interface InferData {
 }
 
 export function transformInferApiData(apiData: InferApiData): InferData {
-    const functionInferData: Array<FunctionInferData> = []
+    const functionInferData: Array<FunctionInferData> = [];
 
     for (const func of apiData.funcs) {
         // Assume: already sorted by value. Extract keys
         const returnTypes = func.ret_type_p.map(retParam => {
-            return retParam[0]
-        })
+            return retParam[0];
+        });
         
-        const paramTypes: { [key: string]: Array<string> } = {}
+        const paramTypes: { [key: string]: Array<string> } = {};
 
         for (const param of Object.keys(func.params_p)) {
             paramTypes[param] = func.params_p[param].map(annotation => {
-                return annotation[0]
-            })
+                return annotation[0];
+            });
         }
 
         const funcEntry: FunctionInferData = {
             lines: [func.fn_lc[0][0], func.fn_lc[1][0]],
             returnTypes: returnTypes,
             params: paramTypes
-        }
+        };
 
         functionInferData.push(funcEntry);
     }
 
     return {
         functions: functionInferData
-    }
+    };
 }

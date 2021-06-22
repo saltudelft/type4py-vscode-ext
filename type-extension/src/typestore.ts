@@ -6,7 +6,7 @@ import { FunctionInferData, InferData } from "./python";
  */
 class TypeStore {
     /** Data map: filepath -> inference data */
-    private dataMap: Map<string, InferData>
+    private dataMap: Map<string, InferData>;
 
     constructor() {
         this.dataMap = new Map();
@@ -27,10 +27,11 @@ class TypeStore {
      * @returns Value mapped by filepath
      */
     get(key: string): InferData | undefined {
+        const t = 5;
         return this.dataMap.get(key);
     }
 }
 
 // Export singleton data store
-const typeDataStore = new TypeStore()
-export default typeDataStore
+const typeDataStore = new TypeStore();
+export default typeDataStore;

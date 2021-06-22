@@ -34,7 +34,7 @@ export function activate(context: vscode.ExtensionContext) {
     // const PYTHON_INFER_SCRIPT_PATH = context.asAbsolutePath(path.join('python', 'test.py'));
 
     const inferCommand = vscode.commands.registerCommand('typehint.infer', async () => {
-        vscode.window.showInformationMessage("Inferring type hints for current file...")
+        vscode.window.showInformationMessage("Inferring type hints for current file...");
 
         // Get current file being editted
         const currentPath = vscode.window.activeTextEditor?.document.fileName;
@@ -69,7 +69,7 @@ export function activate(context: vscode.ExtensionContext) {
             //     vscode.window.showInformationMessage("Type hint inference complete!");
             // })
         }
-    })
+    });
 
     context.subscriptions.push(inferCommand);
 }

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { ParamHintCompletionProvider, ReturnHintCompletionProvider } from './completionProvider';
-import { FunctionInferData, InferApiData, paramHintTrigger, returnHintTrigger, transformInferApiData } from "./python";
+import { FunctionInferData, InferApiResponse, paramHintTrigger, returnHintTrigger, transformInferApiData } from "./python";
 import { TypeHintSettings } from './settings';
 import * as cp from 'child_process';
 import * as path from 'path';
@@ -31,7 +31,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     
     // Register command for inferring type hints
-    // const PYTHON_INFER_SCRIPT_PATH = context.asAbsolutePath(path.join('python', 'test.py'));
+    // const PYTHON_INFER_SCRIPT_PATH = context.asAbsolutePath(path.join('python', 'test_response.py'));
 
     const inferCommand = vscode.commands.registerCommand('typehint.infer', async () => {
         vscode.window.showInformationMessage("Inferring type hints for current file...");
@@ -43,7 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (currentPath) {
             try {
                 const fileContents = fs.readFileSync(currentPath);
-                const inferResult = await axios.post<InferApiData>(INFER_URL_BASE, fileContents,
+                const inferResult = await axios.post<InferApiResponse>(INFER_URL_BASE, fileContents,
                     { headers: { "Content-Type": "text/plain" } }
                 );
 
@@ -53,6 +53,7 @@ export function activate(context: vscode.ExtensionContext) {
                 const transformedInferResultData = transformInferApiData(inferResultData);
                 typestore.add(currentPath, transformedInferResultData);
 
+                // TODO: set timeout for request? (and report error via message)
                 vscode.window.showInformationMessage("Type hint inference complete!");
             } catch (error) {
                 // TODO: more precise error handling

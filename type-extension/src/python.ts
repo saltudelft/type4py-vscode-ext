@@ -83,28 +83,59 @@ const typeCategories: { [key: string]: TypeCategory } = {
     tuple: TypeCategory.Collection
 };
 
-/** API DATA TYPES */
+/** TYPE4PY API DATA TYPES */
 
-export interface InferApiData {
+/** Common datatypes */
+
+/**
+ * Type definition for parameter predection.
+ * The first element is the type qualifier, the second is the confidence (float in [0, 1])
+*/
+export type InferApiParamPrediction = [string, number];
+
+/**
+ * Type for list of Infer API parameter predections.
+ */
+export type InferApiParamPredictionList = Array<InferApiParamPrediction>;
+
+/**
+ * Interface to represent an Object. Keys are parameter IDs and values are
+ * **ordered** lists of predictions.
+ */
+export interface InferApiParamPredictionMapping {
+    [key: string]: InferApiParamPredictionList
+}
+
+/** Composable interfaces */
+
+export interface WithInferFunctions {
     funcs: Array<InferApiFunction>
-    // TODO: classes
-    // TODO: variables?
 }
 
-export type InferApiParamData = [string, number];
+export interface WithInferVariables {
+    variables_p: InferApiParamPredictionMapping,
+    variables: { [key: string]: string },
+}
 
-export interface InferApiFunction {
-    fn_lc: Array<Array<number>>,
+/** Type4Py response elements */
+
+export interface InferApiFunction extends WithInferVariables {
     name: string,
-    params: { [key: string]: string }
-    params_p: {
-        [key: string]: Array<InferApiParamData>
-    },
-    ret_type_p: Array<InferApiParamData>
-    // TODO: variables
+    fn_lc: Array<Array<number>>,
+    params: { [key: string]: string },
+    params_p: InferApiParamPredictionMapping,
+    ret_type_p: InferApiParamPredictionList,
 }
 
-/** EXTENSION DATA TYPES */
+export interface InferApiClass extends WithInferFunctions, WithInferVariables {
+    name: string,
+}
+
+export interface InferApiResponse extends WithInferFunctions, WithInferVariables {
+    classes: Array<InferApiClass>
+}
+
+/** TYPE SUGGESTION EXTENSION DATA TYPES */
 
 /**
  * Data type for function inference data.
@@ -121,13 +152,26 @@ export interface InferApiFunction {
         /** Ordered array of parameter type annotations */
         [key: string]: Array<string>
     }
+
+    // TODO: variables
 }
 
 export interface InferData {
     functions: Array<FunctionInferData>
+    // TODO: variables
+    // TODO: classes
 }
 
-export function transformInferApiData(apiData: InferApiData): InferData {
+/**
+ * Transforms a Type4Py infer API response to an extension-friendly
+ * InferData object.
+ * 
+ * TODO: does not yet support variables or classes!
+ * 
+ * @param apiData response to transform
+ * @returns Transformed InferData object
+ */
+export function transformInferApiData(apiData: InferApiResponse): InferData {
     const functionInferData: Array<FunctionInferData> = [];
 
     for (const func of apiData.funcs) {

@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
     // Register command for inferring type hints
     // const PYTHON_INFER_SCRIPT_PATH = context.asAbsolutePath(path.join('python', 'test_response.py'));
 
-    const inferCommand = vscode.commands.registerCommand('typehint.infer', async () => {
+    const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => {
         vscode.window.showInformationMessage("Inferring type hints for current file...");
 
         // Get current file being editted
@@ -54,6 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
                 typestore.add(currentPath, transformedInferResultData);
 
                 // TODO: set timeout for request? (and report error via message)
+                // TODO: indicate file path
                 vscode.window.showInformationMessage("Type hint inference complete!");
             } catch (error) {
                 // TODO: more precise error handling

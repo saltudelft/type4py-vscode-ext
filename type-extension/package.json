@@ -1,13 +1,12 @@
 {
-	"name": "vscode-python-typehint",
-	"displayName": "Python Type Hint",
-	"version": "1.4.1",
-	"publisher": "njqdev",
-	"description": "Type hint completion for Python.",
+	"name": "type4py-vscode",
+	"displayName": "Type4Py VSCode Extension",
+	"version": "0.1.0",
+	"description": "Type inference completion hints for Python.",
 	"icon": "images/icon.png",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/njqdev/vscode-python-typehint"
+		"url": "https://github.com/saltudelft/type4py-vscode-ext"
 	},
 	"license": "MIT",
 	"categories": [
@@ -30,8 +29,8 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "typehint.infer",
-				"title": "TypeHint: Infer type hints"
+				"command": "type4py.infer",
+				"title": "Type4Py: Infer type hints"
 			}
 		],
 		"languages": [

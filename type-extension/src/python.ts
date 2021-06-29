@@ -124,7 +124,7 @@ export interface InferApiFunction extends WithInferVariables {
     fn_lc: Array<Array<number>>,
     params: { [key: string]: string },
     params_p: InferApiParamPredictionMapping,
-    ret_type_p: InferApiParamPredictionList,
+    ret_type_p?: InferApiParamPredictionList,
 }
 
 export interface InferApiClass extends WithInferFunctions, WithInferVariables {
@@ -166,19 +166,25 @@ export interface InferData {
  * Transforms a Type4Py infer API response to an extension-friendly
  * InferData object.
  * 
- * TODO: does not yet support variables or classes!
+ * TODO: does not yet support variables!
  * 
  * @param apiData response to transform
  * @returns Transformed InferData object
  */
 export function transformInferApiData(apiData: InferApiResponse): InferData {
     const functionInferData: Array<FunctionInferData> = [];
+    let funcs: InferApiFunction[] = apiData.funcs;
 
-    for (const func of apiData.funcs) {
+    // Merge class functions into processed functions list
+    for (const apiClass of apiData.classes) {
+        funcs = funcs.concat(apiClass.funcs);
+    }
+
+    for (const func of funcs) {
         // Assume: already sorted by value. Extract keys
-        const returnTypes = func.ret_type_p.map(retParam => {
+        const returnTypes = func.ret_type_p?.map(retParam => {
             return retParam[0];
-        });
+        }) || [];
         
         const paramTypes: { [key: string]: Array<string> } = {};
 

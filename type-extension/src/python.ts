@@ -156,10 +156,15 @@ export interface InferApiResponse extends WithInferFunctions, WithInferVariables
     // TODO: variables
 }
 
+export interface VariableInferData {
+    // TODO: missing line data
+    name: string
+    annotations: Array<string>
+}
+
 export interface InferData {
     functions: Array<FunctionInferData>
-    // TODO: variables
-    // TODO: classes
+    variables: Array<VariableInferData>
 }
 
 /**
@@ -175,9 +180,16 @@ export function transformInferApiData(apiData: InferApiResponse): InferData {
     const functionInferData: Array<FunctionInferData> = [];
     let funcs: InferApiFunction[] = apiData.funcs;
 
+    const variableInferData: Array<VariableInferData> = []
+    let variables: InferApiParamPredictionMapping = apiData.variables_p
+
     // Merge class functions into processed functions list
     for (const apiClass of apiData.classes) {
         funcs = funcs.concat(apiClass.funcs);
+
+        // TODO: right now, duplicates will break. Need some form of distinction,
+        // e.g. by line number.
+        variables = Object.assign(variables, apiClass.variables_p);
     }
 
     for (const func of funcs) {
@@ -203,7 +215,19 @@ export function transformInferApiData(apiData: InferApiResponse): InferData {
         functionInferData.push(funcEntry);
     }
 
+    // Transform variables
+    for (const variable of Object.keys(variables)) {
+        const predictionList = variables[variable];
+        variableInferData.push({
+            name: variable,
+            annotations: predictionList.map((val) => {
+                return val[0]
+            })
+        });
+    }
+
     return {
-        functions: functionInferData
+        functions: functionInferData,
+        variables: variableInferData
     };
 }

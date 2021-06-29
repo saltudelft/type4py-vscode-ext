@@ -9,10 +9,11 @@ import {
     TextLine,
     TextDocument,
     Range,
-    window
+    window,
+    TextEditorCursorStyle
 } from "vscode";
 import { TypeHintProvider } from "./typeHintProvider";
-import { paramHintTrigger, returnHintTrigger, PythonType, getDataTypeContainer, FunctionInferData  } from "./python";
+import { paramHintTrigger, returnHintTrigger, PythonType, getDataTypeContainer, FunctionInferData, VariableInferData  } from "./python";
 import { TypeHintSettings } from "./settings";
 import { WorkspaceSearcher } from "./workspaceSearcher";
 import { TypingHintProvider } from "./typingHintProvider";
@@ -248,6 +249,54 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
 }
 
 /**
+ * Provides one or more variable type hint {@link CompletionItem}.
+ */
+ export class VariableCompletionProvider extends CompletionProvider implements CompletionItemProvider {
+
+    public async provideCompletionItems(
+        doc: TextDocument, 
+        pos: Position,
+        token: CancellationToken,
+        context: CompletionContext
+    ): Promise<CompletionList | null> {
+        console.log(context.triggerCharacter);
+        if (context.triggerCharacter !== paramHintTrigger) {
+            return null;
+        }
+
+        const items: CompletionItem[] = [];
+        const line = doc.lineAt(pos);
+
+        if (this.shouldProvideItems(line, pos)) {
+            console.log("Checking for infer data");
+            // const inferData = findFunctionInferenceDataForActiveFilePos(pos);
+            const inferData = findVariableInferenceDataForActiveFilePos(line);
+            
+            if (inferData) {
+                console.log("Infer data found");
+                for (let i = 0; i < inferData.annotations.length; ++i) {
+                    const item = new CompletionItem(
+                        inferData.annotations[i],
+                        CompletionItemKind.TypeParameter
+                    );
+                    item.sortText = `${i}`;
+                    items.push(item);
+                }
+            }
+        }
+        return Promise.resolve(new CompletionList(items, false));
+    }
+
+    private shouldProvideItems(line: TextLine, pos: Position): boolean {
+        // TODO: should this support multi-line?
+        const lineRemainder = line.text.substr(pos.character - 1);
+
+        // Test for '<space>:<space>=' pattern
+        return pos.character > 0 && /(\s)*:(\s)*=/.test(lineRemainder);
+    }
+}
+
+/**
  * Finds function inference data for the specified position
  * in the currently active file.
  * 
@@ -269,7 +318,7 @@ function findFunctionInferenceDataForActiveFilePos(pos: Position): FunctionInfer
             const lineNumber = pos.line + 1;
 
             // Find line
-            for (let x of annotationData.functions) {
+            for (const x of annotationData.functions) {
                 if (lineNumber >= x['lines'][0] && lineNumber <= x['lines'][1]) {
                     return x;
                 }
@@ -278,4 +327,34 @@ function findFunctionInferenceDataForActiveFilePos(pos: Position): FunctionInfer
     }
 
     return undefined
+}
+
+function findVariableInferenceDataForActiveFilePos(line: TextLine): VariableInferData | undefined {
+    const activePath = window.activeTextEditor?.document.fileName;
+
+    if (activePath) {
+        // TODO: should support multi-line?
+        // TODO: can this be refactored to share similar
+        //       interface to 'findFunctionInferenceDataForActiveFilePos'?
+
+        // Extract variable: <space>[var]<space>=<...>
+        const splitData = line.text.split("=");
+
+        if (splitData.length > 0) {
+            const variableName = splitData[0].replace(":", "").trim();
+            console.log(`Var name: ${variableName}`);
+            const annotationData = typestore.get(activePath);
+
+            if (annotationData) {
+                for (const fileVar of annotationData.variables) {
+                    console.log(`${fileVar.name} == ${variableName} ?= ${fileVar.name == variableName}`);
+                    if (fileVar.name == variableName) {
+                        return fileVar;
+                    }
+                }
+            }
+        }
+    }
+
+    return undefined;
 }

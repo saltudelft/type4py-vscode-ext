@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ParamHintCompletionProvider, ReturnHintCompletionProvider } from './completionProvider';
+import { ParamHintCompletionProvider, ReturnHintCompletionProvider, VariableCompletionProvider } from './completionProvider';
 import { FunctionInferData, InferApiResponse, paramHintTrigger, returnHintTrigger, transformInferApiData } from "./python";
 import { TypeHintSettings } from './settings';
 import * as cp from 'child_process';
@@ -26,7 +26,12 @@ export function activate(context: vscode.ExtensionContext) {
             'python',
             new ReturnHintCompletionProvider(),
             returnHintTrigger
-        )
+        ),
+        vscode.languages.registerCompletionItemProvider(
+            'python',
+            new VariableCompletionProvider(),
+            paramHintTrigger
+        ),
     );
 
     

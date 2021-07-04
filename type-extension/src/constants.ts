@@ -1,1 +1,1 @@
-export const INFER_URL_BASE = `http://localhost:5000/predict?tc=0`;
+export const INFER_URL_BASE = `https://type4py.com/api/predict?tc=0`;

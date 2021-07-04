@@ -1,14 +1,14 @@
 {
-	"name": "type4py-vscode",
-	"displayName": "Type4Py VSCode Extension",
+	"name": "type4py",
+	"displayName": "Type4Py",
 	"version": "0.1.0",
-	"description": "Type inference completion hints for Python.",
+	"description": "ML-based type auto completion for Python",
 	"icon": "images/icon.png",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/saltudelft/type4py-vscode-ext"
 	},
-	"license": "MIT",
+	"license": "",
 	"categories": [
 		"Programming Languages"
 	],
@@ -30,7 +30,7 @@
 		"commands": [
 			{
 				"command": "type4py.infer",
-				"title": "Type4Py: Infer type hints"
+				"title": "Type4Py: Infer type annotations"
 			}
 		],
 		"languages": [

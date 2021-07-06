@@ -48,13 +48,13 @@ export function activate(context: vscode.ExtensionContext) {
         if (currentPath) {
             try {
                 const fileContents = fs.readFileSync(currentPath);
-                const inferResult = await axios.post<InferApiResponse>(INFER_URL_BASE, fileContents,
+                const inferResult = await axios.post(INFER_URL_BASE, fileContents,
                     { headers: { "Content-Type": "text/plain" } }
                 );
 
                 console.log(inferResult);
 
-                const inferResultData = inferResult.data;
+                const inferResultData = inferResult.data['response'];
                 const transformedInferResultData = transformInferApiData(inferResultData);
                 typestore.add(currentPath, transformedInferResultData);
 

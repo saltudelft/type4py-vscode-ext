@@ -59,7 +59,7 @@ async function infer(settings: Type4PySettings): Promise<void> {
         vscode.window.showErrorMessage(ERROR_MESSAGES.lineCountExceeded);
     } else if (activeDocument.languageId !== "python") {
         vscode.window.showErrorMessage(ERROR_MESSAGES.nonPythonFile);
-    } else if (activeDocument.lineCount === 0) {
+    } else if (activeDocument.getText().length === 0) {
         vscode.window.showErrorMessage(ERROR_MESSAGES.emptyFile);
     } else {
         try {

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { ParamHintCompletionProvider, ReturnHintCompletionProvider, VariableCompletionProvider } from './completionProvider';
-import { InferApiResponse, paramHintTrigger, returnHintTrigger, transformInferApiData } from "./python";
+import { InferApiData, InferApiPayload, paramHintTrigger, returnHintTrigger, transformInferApiData } from "./python";
 import { TypeHintSettings } from './settings';
 import typestore from './typestore';
 import axios from 'axios';
@@ -55,10 +55,10 @@ export function activate(context: vscode.ExtensionContext) {
             const currentPath = activeDocument.fileName;
             try {
                 const fileContents = fs.readFileSync(currentPath);
+                console.log(`TC: ${settings.tcEnabled}`);
 
-                console.log(settings.tcEnabled);
-
-                const inferResult = await axios.post(INFER_URL_BASE, fileContents,
+                // Send request
+                const inferResult = await axios.post<InferApiPayload>(INFER_URL_BASE, fileContents,
                     { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT, params: {
                         // TODO: check with server side; this can be passed as boolean
                         tc: settings.tcEnabled ? 1 : 0
@@ -66,7 +66,18 @@ export function activate(context: vscode.ExtensionContext) {
                 );
                 console.log(inferResult);
                 
-                const inferResultData: InferApiResponse = inferResult.data['response'];
+                // Check if response is present & report error if not
+                if (!inferResult.data.response) {
+                    if (inferResult.data.error) {
+                        vscode.window.showErrorMessage(inferResult.data.error);
+                    } else {
+                        vscode.window.showErrorMessage(ERROR_MESSAGES.emptyPayload);
+                    }
+
+                    return;
+                }
+
+                const inferResultData: InferApiData = inferResult.data.response;
                 const transformedInferResultData = transformInferApiData(inferResultData);
                 console.log(transformedInferResultData);
                 typestore.add(currentPath, transformedInferResultData);

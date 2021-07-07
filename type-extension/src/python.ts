@@ -138,7 +138,12 @@ export interface InferApiClass extends WithInferFunctions, WithInferVariables {
     cls_var_ln: InferApiVarLocations
 }
 
-export interface InferApiResponse extends WithInferFunctions, WithInferVariables {
+export interface InferApiPayload {
+    response?: InferApiData,
+    error?: string
+}
+
+export interface InferApiData extends WithInferFunctions, WithInferVariables {
     classes: Array<InferApiClass>,
     mod_var_ln: InferApiVarLocations
 }
@@ -181,7 +186,12 @@ export interface InferData {
  * @param apiData response to transform
  * @returns Transformed InferData object
  */
-export function transformInferApiData(apiData: InferApiResponse): InferData {
+export interface InferApiPayload {
+    response?: InferApiData,
+    error?: string
+}
+
+export function transformInferApiData(apiData: InferApiData): InferData {
     const functionInferData: Array<FunctionInferData> = [];
     let funcs: InferApiFunction[] = apiData.funcs;
 

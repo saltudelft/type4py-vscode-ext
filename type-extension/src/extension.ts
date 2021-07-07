@@ -45,13 +45,15 @@ export function activate(context: vscode.ExtensionContext) {
         // Get current file being editted
         const activeDocument = vscode.window.activeTextEditor?.document;
 
-        // TODO: exception handling when no file present
-        // TODO: exception handlnig when non-Python file
-        // TODO: exception handling on empty files
-        // TODO: exception handling when server fails
         if (activeDocument) {
             if (activeDocument.lineCount > 1000) {
                 vscode.window.showErrorMessage(ERROR_MESSAGES.lineCountExceeded);
+                return;
+            } else if (activeDocument.languageId !== "python") {
+                vscode.window.showErrorMessage(ERROR_MESSAGES.nonPythonFile);
+                return;
+            } else if (activeDocument.lineCount === 0) {
+                vscode.window.showErrorMessage(ERROR_MESSAGES.emptyFile);
                 return;
             }
 
@@ -62,6 +64,8 @@ export function activate(context: vscode.ExtensionContext) {
                     { headers: { "Content-Type": "text/plain" } }
                 );
 
+                // TODO: set timeout for request? (and report error via message)
+                // TODO: indicate file path
                 console.log(inferResult);
 
                 const inferResultData: InferApiResponse = inferResult.data['response'];
@@ -69,13 +73,13 @@ export function activate(context: vscode.ExtensionContext) {
                 console.log(transformedInferResultData);
                 typestore.add(currentPath, transformedInferResultData);
 
-                // TODO: set timeout for request? (and report error via message)
-                // TODO: indicate file path
                 vscode.window.showInformationMessage("Type hint inference complete!");
             } catch (error) {
                 // TODO: more precise error handling
                 vscode.window.showErrorMessage(error);
             }
+        } else {
+            vscode.window.showErrorMessage(ERROR_MESSAGES.noActiveFile);
         }
     });
 

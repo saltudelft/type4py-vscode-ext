@@ -1,11 +1,8 @@
 import * as vscode from 'vscode';
 import { ParamHintCompletionProvider, ReturnHintCompletionProvider, VariableCompletionProvider } from './completionProvider';
-import { FunctionInferData, InferApiResponse, paramHintTrigger, returnHintTrigger, transformInferApiData } from "./python";
+import { InferApiResponse, paramHintTrigger, returnHintTrigger, transformInferApiData } from "./python";
 import { TypeHintSettings } from './settings';
-import * as cp from 'child_process';
-import * as path from 'path';
 import typestore from './typestore';
-import { privateEncrypt } from 'crypto';
 import axios from 'axios';
 import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE } from './constants';
 import * as fs from 'fs';
@@ -37,8 +34,6 @@ export function activate(context: vscode.ExtensionContext) {
 
     
     // Register command for inferring type hints
-    // const PYTHON_INFER_SCRIPT_PATH = context.asAbsolutePath(path.join('python', 'test_response.py'));
-
     const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => {
         vscode.window.showInformationMessage("Inferring type hints for current file...");
 

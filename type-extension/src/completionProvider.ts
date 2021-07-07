@@ -10,13 +10,9 @@ import {
     TextDocument,
     Range,
     window,
-    TextEditorCursorStyle
 } from "vscode";
-import { TypeHintProvider } from "./typeHintProvider";
-import { paramHintTrigger, returnHintTrigger, PythonType, getDataTypeContainer, FunctionInferData, VariableInferData  } from "./python";
+import { paramHintTrigger, returnHintTrigger, FunctionInferData, VariableInferData  } from "./python";
 import { TypeHintSettings } from "./settings";
-import { WorkspaceSearcher } from "./workspaceSearcher";
-import { TypingHintProvider } from "./typingHintProvider";
 import typestore from './typestore';
 
 
@@ -91,13 +87,6 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
             if (this.shouldProvideItems(precedingText, pos, doc) && !token.isCancellationRequested) {
                 const param = this.getParam(precedingText);
 
-                // Original typehint code
-                // const documentText = doc.getText();
-                // const typeContainer = getDataTypeContainer();
-                // const provider = new TypeHintProvider(typeContainer);
-                // const wsSearcher = new WorkspaceSearcher(doc.uri, this.settings, typeContainer);
-                // let estimations: string[] = [];
-
                 if (param && !token.isCancellationRequested) {
                     const inferData = findFunctionInferenceDataForActiveFilePos(pos)
 
@@ -112,45 +101,11 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
                         }
                     }
 
-                    // Original typehint code
-                    // const workspaceHintSearch = this.settings.workspaceSearchEnabled
-                    //     ? this.workspaceHintSearch(param, wsSearcher, documentText)
-                    //     : null;
-                    // try {
-                    //     estimations = await provider.estimateTypeHints(param, documentText);
-                    //     if (estimations.length > 0) {
-                    //         this.pushEstimationsToItems(estimations, items);
-                    //         wsSearcher.cancel();
-                    //     }
-                    // } catch {
-                    // }
-
-                    // if (token.isCancellationRequested) {
-                    //     wsSearcher.cancel();
-                    //     return Promise.resolve(null); 
-                    // }
-                    // this.pushHintsToItems(provider.remainingTypeHints(), items, estimations.length === 0);
-                    // this.itemSortPrefix++;
-                    // this.pushHintsToItems(provider.remainingTypingHints(), items, false);
-
-                    // const hint = await workspaceHintSearch;
-                    // if (hint && provider.hintNotProvided(hint)) {
-                    //     items.unshift(this.selectedCompletionItem(hint, "0a"));
-                    // }
-
                     return Promise.resolve(new CompletionList(items, false));  
                 }
             }
         }
         return Promise.resolve(null);
-    }
-
-    private async workspaceHintSearch(param: string, ws: WorkspaceSearcher, docText: string): Promise<string | null> {
-        try {
-            return ws.findHintOfSimilarParam(param, docText);
-        } catch {
-            return null;
-        }
     }
 
     /**
@@ -225,16 +180,6 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
                     items.push(item);
                 }
             }
-            
-            // Original typehint code:
-            // const provider = new TypingHintProvider(getDataTypeContainer());
-            // const detectTypingImport = provider.detectTypingImport(doc.getText());
-
-            // this.pushHintsToItems(Object.values(PythonType), items, true);
-            // this.itemSortPrefix++;
-
-            // await detectTypingImport;
-            // this.pushHintsToItems(provider.getRemainingHints(), items, false);
         }
         return Promise.resolve(new CompletionList(items, false));
     }

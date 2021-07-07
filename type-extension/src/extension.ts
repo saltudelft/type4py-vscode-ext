@@ -9,6 +9,7 @@ import { privateEncrypt } from 'crypto';
 import axios from 'axios';
 import { INFER_URL_BASE } from './constants';
 import * as fs from 'fs';
+import { ERROR_MESSAGES } from './messages';
 
 
 // Called when the extension is activated.
@@ -42,10 +43,19 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage("Inferring type hints for current file...");
 
         // Get current file being editted
-        const currentPath = vscode.window.activeTextEditor?.document.fileName;
+        const activeDocument = vscode.window.activeTextEditor?.document;
 
-        // TODO: exception handling when no file present, or when non-Python file
-        if (currentPath) {
+        // TODO: exception handling when no file present
+        // TODO: exception handlnig when non-Python file
+        // TODO: exception handling on empty files
+        // TODO: exception handling when server fails
+        if (activeDocument) {
+            if (activeDocument.lineCount > 1000) {
+                vscode.window.showErrorMessage(ERROR_MESSAGES.lineCountExceeded);
+                return;
+            }
+
+            const currentPath = activeDocument.fileName;
             try {
                 const fileContents = fs.readFileSync(currentPath);
                 const inferResult = await axios.post(INFER_URL_BASE, fileContents,
@@ -66,16 +76,6 @@ export function activate(context: vscode.ExtensionContext) {
                 // TODO: more precise error handling
                 vscode.window.showErrorMessage(error);
             }
-
-            // cp.exec(`python3 ${PYTHON_INFER_SCRIPT_PATH}`, (error, stdout, stderr) => {
-            //     // TODO: exception handling
-
-            //     // Output file is a JSON file, parse it and add to state
-            //     const res: Array<FunctionInferData> = JSON.parse(stdout);
-            //     typestore.add(currentPath, res);
-
-            //     vscode.window.showInformationMessage("Type hint inference complete!");
-            // })
         }
     });
 

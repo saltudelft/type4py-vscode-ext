@@ -3,7 +3,7 @@ import { workspace, Event, EventEmitter } from "vscode";
 /**
  * Container of user settings.
  */
-export class TypeHintSettings {
+export class Type4PySettings {
 
     private _tcEnabled = false;
 

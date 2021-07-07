@@ -11,8 +11,8 @@ import {
     Range,
     window,
 } from "vscode";
-import { paramHintTrigger, returnHintTrigger, FunctionInferData, VariableInferData  } from "./python";
-import { TypeHintSettings } from "./settings";
+import { FunctionInferData, VariableInferData  } from "./type4pyData";
+import { paramHintTrigger, returnHintTrigger } from './pythonData';
 import typestore from './typestore';
 
 

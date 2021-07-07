@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
 import { ParamHintCompletionProvider, ReturnHintCompletionProvider, VariableCompletionProvider } from './completionProvider';
-import { InferApiData, InferApiPayload, paramHintTrigger, returnHintTrigger, transformInferApiData } from "./python";
-import { TypeHintSettings } from './settings';
+import { InferApiData, InferApiPayload, transformInferApiData } from "./type4pyData";
+import { paramHintTrigger, returnHintTrigger } from "./pythonData";
+import { Type4PySettings } from './settings';
 import typestore from './typestore';
 import axios from 'axios';
 import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE } from './constants';
@@ -12,7 +13,7 @@ import { ERROR_MESSAGES } from './messages';
 // Called when the extension is activated.
 export function activate(context: vscode.ExtensionContext) {
 
-    const settings = new TypeHintSettings();
+    const settings = new Type4PySettings();
 
     context.subscriptions.push(
         vscode.languages.registerCompletionItemProvider(

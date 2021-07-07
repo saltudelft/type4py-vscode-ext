@@ -1,4 +1,4 @@
-import { InferData } from "./python";
+import { InferData } from "./type4pyData";
 
 /**
  * Data container to allow inserting and fetching type data.

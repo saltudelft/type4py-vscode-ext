@@ -1,5 +1,0 @@
-flask
-gunicorn[gevent]
-Flask-Limiter
-type4py
-supervisor

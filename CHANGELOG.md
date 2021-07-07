@@ -1,55 +1,14 @@
-# Change Log
+# Changelog
+All notable changes to the [Type4Py's VSCode extension](https://github.com/saltudelft/type4py-vscode-ext) will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [1.4.1] - 2020-10-18
+## [Unreleased]
 
-* Added a known issue to the readme.
+## [0.1.0]
+### Added
+- Querying the pre-trained [Type4Py](https://github.com/saltudelft/type4py) model on the server.
+- Handling the server's responses and convert to defined data structures for type suggestions.
+- Type autocompletion for parameters and return type functions/class methods.
+- Type autocompletion for variables (i.e. module-level variables, class variables, and local variables).
+- Exception handlings and considering limitations.
+- Adding README
 
-## [1.4.0] - 2020-10-18
-
-* Added type hints for bytes
-* Changed the default workspace search limit to 10
-
-## [1.3.0] - 2020-08-22
-
-* Type hints for the typing module are now provided at the bottom of the list by default
-* Fixed the first type hint not always being pre-selected
-* Fixed incorrectly sorted type hints in some cases
-
-## [1.2.0] - 2020-05-05
-
-### Added:
-
-* Return type hints for the typing module
-* Support for non-ASCII class names
-
-### Fixed:
-
-* Default parameter values sometimes being provided within type hint items
-
-## [1.1.2] - 2020-04-22
-
-* Fixed type hints not being provided for async functions.
-
-## [1.1.0] - 2020-04-19
-
-### Improved:
-
-* New setting for disabling workspace searching.
-* More default hints are provided for the typing module.
-* Overall speed.
-
-### Fixed:
-
-* Setting the workspace search limit to 0 not working.
-
-## [1.0.2] - 2020-04-16
-
-* Fixed type hints being provided for non-parameters.
-
-## [1.0.1] - 2020-04-13
-
-* Fixed type hints sometimes being provided when typing ':' within a string.
-
-## [1.0.0] - 2020-04-09
-
-* Initial release

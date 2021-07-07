@@ -6,7 +6,7 @@ import { TypeHintSettings } from '../../../src/settings';
 import { messageFor } from '../../common';
 
 suite('ParamHintCompletionProvider', () => {
-    const provider = new ParamHintCompletionProvider(new TypeHintSettings());
+    const provider = new ParamHintCompletionProvider();
 
     test("provides items for first param", async () => {
         let param = "param_1:";

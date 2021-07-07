@@ -66,11 +66,8 @@ export abstract class CompletionProvider {
  */
 export class ParamHintCompletionProvider extends CompletionProvider implements CompletionItemProvider {
 
-    private settings: TypeHintSettings;
-
-    constructor(settings: TypeHintSettings) {
+    constructor() {
         super();
-        this.settings = settings;
     }
 
     public async provideCompletionItems(

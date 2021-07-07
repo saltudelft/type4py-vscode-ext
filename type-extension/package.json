@@ -46,17 +46,12 @@
 			}
 		],
 		"configuration": {
-			"title": "Python Type Hint",
+			"title": "Type4Py",
 			"properties": {
-				"workspace.searchEnabled": {
+				"workspace.typeCheckEnabled": {
 					"type": "boolean",
-					"default": true,
-					"description": "If enabled, other files in the workspace are searched when estimating types for a parameter. Disabling this will increase performance, but may reduce estimation accuracy."
-				},
-				"workspace.searchLimit": {
-					"type": "number",
-					"default": 10,
-					"description": "The maximum number of files searched in a workspace search. Has no effect if workspace searching is disabled."
+					"default": false,
+					"description": "If enabled, type checking will be performed for type annotation suggestions. This will result in longer waiting times, but will lead to more accurate annotation suggestions."
 				}
 			}
 		}

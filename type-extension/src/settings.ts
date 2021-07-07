@@ -5,8 +5,7 @@ import { workspace, Event, EventEmitter } from "vscode";
  */
 export class TypeHintSettings {
 
-    private _workspaceSearchEnabled = true;
-    private _workspaceSearchLimit = 10;
+    private _tcEnabled = false;
 
     constructor() {
         workspace.onDidChangeConfiguration(() => {
@@ -16,11 +15,8 @@ export class TypeHintSettings {
         this.initialize();
     }
 
-    public get workspaceSearchLimit() {
-        return this._workspaceSearchLimit;
-    }
-    public get workspaceSearchEnabled() {
-        return this._workspaceSearchEnabled;
+    public get tcEnabled() {
+        return this._tcEnabled;
     }
     
     public readonly settingsUpdated = new EventEmitter<void>();
@@ -30,13 +26,10 @@ export class TypeHintSettings {
     }
 
     private initialize() {
-        const wsEnable: boolean | undefined = workspace.getConfiguration('workspace').get('searchEnabled');
-        const searchLimit: number | undefined = workspace.getConfiguration('workspace').get('searchLimit');
-        if (wsEnable !== undefined) {
-            this._workspaceSearchEnabled = wsEnable;
-        }
-        if (searchLimit !== undefined) {
-            this._workspaceSearchLimit = Number.isInteger(searchLimit) ? searchLimit : Math.round(searchLimit);
+        const tcEnable: boolean | undefined = workspace.getConfiguration('workspace').get('typeCheckEnabled');
+
+        if (tcEnable !== undefined) {
+            this._tcEnabled = tcEnable;
         }
     }
 

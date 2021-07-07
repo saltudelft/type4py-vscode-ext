@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.languages.registerCompletionItemProvider(
             'python',
-            new ParamHintCompletionProvider(settings),
+            new ParamHintCompletionProvider(),
             paramHintTrigger
         ),
         vscode.languages.registerCompletionItemProvider(
@@ -56,8 +56,13 @@ export function activate(context: vscode.ExtensionContext) {
             try {
                 const fileContents = fs.readFileSync(currentPath);
 
+                console.log(settings.tcEnabled);
+
                 const inferResult = await axios.post(INFER_URL_BASE, fileContents,
-                    { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT }
+                    { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT, params: {
+                        // TODO: check with server side; this can be passed as boolean
+                        tc: settings.tcEnabled ? 1 : 0
+                    }}
                 );
                 console.log(inferResult);
                 

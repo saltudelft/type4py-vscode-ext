@@ -14,6 +14,7 @@ import {
 import { FunctionInferData, VariableInferData  } from "./type4pyData";
 import { paramHintTrigger, returnHintTrigger } from './pythonData';
 import typestore from './typestore';
+import { isWithinLineBounds } from "./utils";
 
 
 export abstract class CompletionProvider {
@@ -298,13 +299,3 @@ function findVariableInferenceDataForActiveFilePos(line: TextLine): VariableInfe
     return undefined;
 }
 
-/**
- * Helper function to check if a target line number is (inclusively) within
- * the given bounds.
- * @param line Line number to check
- * @param bounds Bounds to check inclusion in
- * @returns True if line is in bounds
- */
-function isWithinLineBounds(line: number, bounds: [number, number]) {
-    return line >= bounds[0] && line <= bounds[1];
-}

@@ -205,7 +205,7 @@ export function transformInferApiData(apiData: InferApiResponse): InferData {
         // Assume: already sorted by value. Extract keys
         const returnTypes = func.ret_type_p?.map(retParam => {
             return retParam[0];
-        }) || [];
+        }) || ['None'];
         
         const paramTypes: { [key: string]: Array<string> } = {};
 

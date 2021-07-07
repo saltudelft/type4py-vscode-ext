@@ -7,7 +7,7 @@ import * as path from 'path';
 import typestore from './typestore';
 import { privateEncrypt } from 'crypto';
 import axios from 'axios';
-import { INFER_URL_BASE } from './constants';
+import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE } from './constants';
 import * as fs from 'fs';
 import { ERROR_MESSAGES } from './messages';
 
@@ -60,23 +60,26 @@ export function activate(context: vscode.ExtensionContext) {
             const currentPath = activeDocument.fileName;
             try {
                 const fileContents = fs.readFileSync(currentPath);
+
                 const inferResult = await axios.post(INFER_URL_BASE, fileContents,
-                    { headers: { "Content-Type": "text/plain" } }
+                    { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT }
                 );
-
-                // TODO: set timeout for request? (and report error via message)
-                // TODO: indicate file path
                 console.log(inferResult);
-
+                
                 const inferResultData: InferApiResponse = inferResult.data['response'];
                 const transformedInferResultData = transformInferApiData(inferResultData);
                 console.log(transformedInferResultData);
                 typestore.add(currentPath, transformedInferResultData);
 
-                vscode.window.showInformationMessage("Type hint inference complete!");
+                vscode.window.showInformationMessage(
+                    `Type hint inference for ${activeDocument.fileName} complete!`
+                );
             } catch (error) {
-                // TODO: more precise error handling
-                vscode.window.showErrorMessage(error);
+                console.error(error);
+                
+                if (error.message) {
+                    vscode.window.showErrorMessage(error.message);
+                }                
             }
         } else {
             vscode.window.showErrorMessage(ERROR_MESSAGES.noActiveFile);

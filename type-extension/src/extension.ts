@@ -71,8 +71,9 @@ export function activate(context: vscode.ExtensionContext) {
                 console.log(transformedInferResultData);
                 typestore.add(currentPath, transformedInferResultData);
 
+                const relativePath = vscode.workspace.asRelativePath(activeDocument.fileName);
                 vscode.window.showInformationMessage(
-                    `Type hint inference for ${activeDocument.fileName} complete!`
+                    `Type hint inference for ${relativePath} complete!`
                 );
             } catch (error) {
                 console.error(error);

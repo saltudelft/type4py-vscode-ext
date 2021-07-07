@@ -54,7 +54,7 @@ export function activate(context: vscode.ExtensionContext) {
 
                 console.log(inferResult);
 
-                const inferResultData = inferResult.data['response'];
+                const inferResultData: InferApiResponse = inferResult.data['response'];
                 const transformedInferResultData = transformInferApiData(inferResultData);
                 typestore.add(currentPath, transformedInferResultData);
 

@@ -8,6 +8,7 @@ import axios from 'axios';
 import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE } from './constants';
 import * as fs from 'fs';
 import { ERROR_MESSAGES } from './messages';
+import * as path from 'path';
 
 
 // Called when the extension is activated.
@@ -90,8 +91,8 @@ async function infer(settings: Type4PySettings): Promise<void> {
                 const transformedInferResultData = transformInferApiData(inferResultData);
                 console.log(transformedInferResultData);
                 typestore.add(currentPath, transformedInferResultData);
-    
-                const relativePath = vscode.workspace.asRelativePath(activeDocument.fileName);
+                
+                const relativePath = path.parse(vscode.workspace.asRelativePath(activeDocument.fileName)).base;
                 vscode.window.showInformationMessage(
                     `Type prediction for ${relativePath} completed!`
                 );

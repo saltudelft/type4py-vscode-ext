@@ -259,7 +259,6 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
         token: CancellationToken,
         context: CompletionContext
     ): Promise<CompletionList | null> {
-        console.log(context.triggerCharacter);
         if (context.triggerCharacter !== paramHintTrigger) {
             return null;
         }
@@ -268,12 +267,10 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
         const line = doc.lineAt(pos);
 
         if (this.shouldProvideItems(line, pos)) {
-            console.log("Checking for infer data");
             // const inferData = findFunctionInferenceDataForActiveFilePos(pos);
             const inferData = findVariableInferenceDataForActiveFilePos(line);
             
             if (inferData) {
-                console.log("Infer data found");
                 for (let i = 0; i < inferData.annotations.length; ++i) {
                     const item = new CompletionItem(
                         inferData.annotations[i],
@@ -319,7 +316,7 @@ function findFunctionInferenceDataForActiveFilePos(pos: Position): FunctionInfer
 
             // Find line
             for (const x of annotationData.functions) {
-                if (lineNumber >= x['lines'][0] && lineNumber <= x['lines'][1]) {
+                if (isWithinLineBounds(lineNumber, x.lines)) {
                     return x;
                 }
             }
@@ -342,13 +339,13 @@ function findVariableInferenceDataForActiveFilePos(line: TextLine): VariableInfe
 
         if (splitData.length > 0) {
             const variableName = splitData[0].replace(":", "").trim();
-            console.log(`Var name: ${variableName}`);
             const annotationData = typestore.get(activePath);
 
             if (annotationData) {
                 for (const fileVar of annotationData.variables) {
-                    console.log(`${fileVar.name} == ${variableName} ?= ${fileVar.name == variableName}`);
-                    if (fileVar.name == variableName) {
+                    const lineNumber = line.lineNumber + 1;
+
+                    if (isWithinLineBounds(lineNumber, fileVar.lines) && fileVar.name == variableName) {
                         return fileVar;
                     }
                 }
@@ -357,4 +354,15 @@ function findVariableInferenceDataForActiveFilePos(line: TextLine): VariableInfe
     }
 
     return undefined;
+}
+
+/**
+ * Helper function to check if a target line number is (inclusively) within
+ * the given bounds.
+ * @param line Line number to check
+ * @param bounds Bounds to check inclusion in
+ * @returns True if line is in bounds
+ */
+function isWithinLineBounds(line: number, bounds: [number, number]) {
+    return line >= bounds[0] && line <= bounds[1];
 }

@@ -56,6 +56,7 @@ export function activate(context: vscode.ExtensionContext) {
 
                 const inferResultData: InferApiResponse = inferResult.data['response'];
                 const transformedInferResultData = transformInferApiData(inferResultData);
+                console.log(transformedInferResultData);
                 typestore.add(currentPath, transformedInferResultData);
 
                 // TODO: set timeout for request? (and report error via message)

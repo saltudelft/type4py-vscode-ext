@@ -106,6 +106,11 @@ export interface InferApiParamPredictionMapping {
     [key: string]: InferApiParamPredictionList
 }
 
+/**
+ * Interface to represent a variable map to track line numbers (first and last)
+ */
+export type InferApiVarLocations = { [key: string]: Array<Array<number>> }
+
 /** Composable interfaces */
 
 export interface WithInferFunctions {
@@ -125,14 +130,17 @@ export interface InferApiFunction extends WithInferVariables {
     params: { [key: string]: string },
     params_p: InferApiParamPredictionMapping,
     ret_type_p?: InferApiParamPredictionList,
+    fn_var_ln: InferApiVarLocations
 }
 
 export interface InferApiClass extends WithInferFunctions, WithInferVariables {
     name: string,
+    cls_var_ln: InferApiVarLocations
 }
 
 export interface InferApiResponse extends WithInferFunctions, WithInferVariables {
-    classes: Array<InferApiClass>
+    classes: Array<InferApiClass>,
+    mod_var_ln: InferApiVarLocations
 }
 
 /** TYPE SUGGESTION EXTENSION DATA TYPES */
@@ -152,12 +160,11 @@ export interface InferApiResponse extends WithInferFunctions, WithInferVariables
         /** Ordered array of parameter type annotations */
         [key: string]: Array<string>
     }
-
-    // TODO: variables
 }
 
 export interface VariableInferData {
-    // TODO: missing line data
+    /** Tuple: first & last line of variable */
+    lines: [number, number] 
     name: string
     annotations: Array<string>
 }
@@ -171,8 +178,6 @@ export interface InferData {
  * Transforms a Type4Py infer API response to an extension-friendly
  * InferData object.
  * 
- * TODO: does not yet support variables!
- * 
  * @param apiData response to transform
  * @returns Transformed InferData object
  */
@@ -181,15 +186,19 @@ export function transformInferApiData(apiData: InferApiResponse): InferData {
     let funcs: InferApiFunction[] = apiData.funcs;
 
     const variableInferData: Array<VariableInferData> = []
-    let variables: InferApiParamPredictionMapping = apiData.variables_p
+
+    // Extract module-level variables
+    variableInferData.push(...extractVariableInferData(
+        apiData.variables_p, 
+        apiData.mod_var_ln
+    ))
 
     // Merge class functions into processed functions list
     for (const apiClass of apiData.classes) {
         funcs = funcs.concat(apiClass.funcs);
-
-        // TODO: right now, duplicates will break. Need some form of distinction,
-        // e.g. by line number.
-        variables = Object.assign(variables, apiClass.variables_p);
+        variableInferData.push(...extractVariableInferData(
+            apiClass.variables_p, apiClass.cls_var_ln
+        ))
     }
 
     for (const func of funcs) {
@@ -213,21 +222,49 @@ export function transformInferApiData(apiData: InferApiResponse): InferData {
         };
 
         functionInferData.push(funcEntry);
-    }
 
-    // Transform variables
-    for (const variable of Object.keys(variables)) {
-        const predictionList = variables[variable];
-        variableInferData.push({
-            name: variable,
-            annotations: predictionList.map((val) => {
-                return val[0]
-            })
-        });
+        variableInferData.push(...extractVariableInferData(
+            func.variables_p, func.fn_var_ln
+        ))
     }
 
     return {
         functions: functionInferData,
         variables: variableInferData
     };
+}
+
+/**
+ * Helper function to convert a prediction mapping with a complementing line number
+ * mapping for variables to an array of VariableInferData objects.
+ * 
+ * Entries that are present in one mapping but not the other are ignored (normally
+ * this should not occur)
+ *
+ * @param predictions Variable -> Prediction map
+ * @param locs Variable -> Line Number map
+ * @returns Array of transformed variable infer data
+ */
+function extractVariableInferData(
+    predictions: InferApiParamPredictionMapping,
+    locs: InferApiVarLocations): Array<VariableInferData> {
+        let inferData: Array<VariableInferData> = [];
+
+        for (const key of Object.keys(predictions)) {
+            if (!locs[key]) {
+                continue;
+            }
+
+            const varData: VariableInferData = {
+                name: key,
+                annotations: predictions[key].map((val) => {
+                    return val[0]
+                }),
+                lines: [locs[key][0][0], locs[key][1][0]]
+            };
+
+            inferData.push(varData);
+        }
+
+        return inferData;
 }

@@ -2,8 +2,9 @@
 	"name": "type4py",
 	"displayName": "Type4Py",
 	"version": "0.1.0",
-	"description": "ML-based type auto completion for Python",
-	"icon": "images/icon.png",
+	"description": "ML-based type annotation completion for Python",
+	"icon": "",
+	"publisher": "amir-mir",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/saltudelft/type4py-vscode-ext"
@@ -85,10 +86,10 @@
 		"typescript": "^3.9.7",
 		"vscode-test": "^1.4.0",
 		"webpack": "^4.44.1",
-		"webpack-cli": "^3.3.12"
+		"webpack-cli": "^3.3.12",
+		"vscode": "^1.1.37"
 	},
 	"dependencies": {
-		"axios": "^0.21.1",
-		"vscode": "^1.1.37"
+		"axios": "^0.21.1"
 	}
 }

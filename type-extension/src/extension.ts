@@ -48,7 +48,7 @@ export function deactivate() {}
  * @param settings Type4Py settings to use
  */
 async function infer(settings: Type4PySettings): Promise<void> {
-    vscode.window.showInformationMessage("Inferring type hints for current file...");
+    vscode.window.showInformationMessage("Inferring type annotations for current file...");
 
     // Get current file being editted
     const activeDocument = vscode.window.activeTextEditor?.document;
@@ -93,7 +93,7 @@ async function infer(settings: Type4PySettings): Promise<void> {
     
                 const relativePath = vscode.workspace.asRelativePath(activeDocument.fileName);
                 vscode.window.showInformationMessage(
-                    `Type hint inference for ${relativePath} complete!`
+                    `Type prediction for ${relativePath} completed!`
                 );
             }
         } catch (error) {

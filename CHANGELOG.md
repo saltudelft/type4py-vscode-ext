@@ -3,7 +3,7 @@ All notable changes to the [Type4Py's VSCode extension](https://github.com/saltu
 
 ## [Unreleased]
 
-## [0.1.0]
+## [0.1.0] - 2021-07-xx
 ### Added
 - Querying the pre-trained [Type4Py](https://github.com/saltudelft/type4py) model on the server.
 - Handling the server's responses and convert to defined data structures for type suggestions.

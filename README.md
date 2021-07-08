@@ -6,6 +6,7 @@ This extension provides machine learning-based type autocompletion for Python, w
 - [Installation](#installation)
 - [Privacy](#privacy)
 - [Limitations](#limitations)
+- [Design](#design)
 - [Support](#support)
 - [Development](#development)
 - [Contributors](#contributors)
@@ -34,6 +35,9 @@ Privacy is very prominent for us. That is, we do consider the following privacy 
 To accommodate fair use and availability for all users, the extension has currently the following limitations:
 - **Rate limit**: 5 requests per hour and 100 requests per day.
 - **File size**: Python source files of up to 1K LoC can be processed.
+
+# Design
+![](images/design.png)
 
 # Support
 Issues and errors can be reported [here](https://github.com/saltudelft/type4py-vscode-ext/issues).

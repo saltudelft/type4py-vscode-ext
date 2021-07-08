@@ -39,7 +39,7 @@ Privacy is very prominent for us. That is, we do consider the following privacy 
 
 # Limitations
 To accommodate fair use and availability for all users, the extension has currently the following limitations:
-- **Rate limit**: 5 requests per hour and 100 requests per day.
+<!-- - **Rate limit**: 5 requests per hour and 100 requests per day. -->
 - **File size**: Python source files of up to 1K LoC can be processed.
 
 # Known Issues

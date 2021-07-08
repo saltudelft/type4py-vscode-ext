@@ -6,9 +6,11 @@ This extension provides machine learning-based type autocompletion for Python, w
 - [Installation](#installation)
 - [Privacy](#privacy)
 - [Limitations](#limitations)
+- [Known Issues](#known-issues)
 - [Design](#design)
 - [Support](#support)
 - [Development](#development)
+- [Roadmap](#roadmap)
 - [Contributors](#contributors)
 - [Acknowledgements](#acknowledgements)
 
@@ -20,6 +22,10 @@ This extension provides machine learning-based type autocompletion for Python, w
 - Simple, fairly fast and easy to use.
 
 # Usage
+## Quick start
+
+## Considerations
+- Do not edit the selected source file after running the Type4Py extension. That is, add the relevant predicted types to the code, save the file and then edit as you wish. We will drop this consideration once the [caching solution](#roadmap) is implemented.
 
 # Installation
 **NOTE:** Update VSCode before installing the extension.
@@ -36,6 +42,9 @@ To accommodate fair use and availability for all users, the extension has curren
 - **Rate limit**: 5 requests per hour and 100 requests per day.
 - **File size**: Python source files of up to 1K LoC can be processed.
 
+# Known Issues
+- When performing type autocompletion, a space after annotation syntax symbols like `:` or `->` changes the list of predicted types based on the matched pattern.
+
 # Design
 ![](images/design.png)
 
@@ -50,6 +59,11 @@ External contributions are welcome such as bug fixes and improvements! Feel free
 3. Open `src/extension.ts` in VSCode, open *"Select Environment"*, and run in *"VS Code Extension Development"*
 4. Open a Python source code file, open the Command Palette, and run the *"Type4Py: Infer type annotations"* command. 
 5. After a success message pops up, fill function annotations as usual (e.g. `x:` or `def ...) ->`), and type completion items will show up (if available)
+
+# Roadmap
+Here are the desirable features for future releases.
+- Implementing a caching solution to preserve type predictions when source files change.
+- Enabling the type-checking process for the Type4Py's predictions using [mypy](https://github.com/python/mypy), preferably at the client-side.
 
 # Contributors
 ## Researchers & Developers

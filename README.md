@@ -26,6 +26,7 @@ This extension provides machine learning-based type autocompletion for Python, w
 
 ## Considerations
 - Do not edit the selected source file after running the Type4Py extension. That is, add the relevant predicted types to the code, save the file and then edit as you wish. We will drop this consideration once the [caching solution](#roadmap) is implemented.
+- Make sure that the selected source file does not have syntax or parse errors before running the extension. In VSCode, Python linters warn about such errors.
 
 # Installation
 **NOTE:** Update VSCode before installing the extension.

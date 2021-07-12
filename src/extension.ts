@@ -73,7 +73,7 @@ async function infer(settings: Type4PySettings): Promise<void> {
             const inferResult = await axios.post<InferApiPayload>(INFER_URL_BASE, fileContents,
                 { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT, params: {
                     // TODO: check with server side; this can be passed as boolean
-                    tc: settings.tcEnabled ? 1 : 0
+                    tc: settings.tcEnabled ? 0 : 0
                 }}
             );
             console.log(inferResult);

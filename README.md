@@ -7,6 +7,7 @@ This extension provides machine learning-based type autocompletion for Python, w
   - [Step-by-Step](#step-by-step)
   - [Considerations](#considerations)
 - [Installation](#installation)
+- [Settings](#settings)
 - [Privacy](#privacy)
 - [Limitations](#limitations)
 - [Known Issues](#known-issues)
@@ -43,6 +44,12 @@ This extension provides machine learning-based type autocompletion for Python, w
 **NOTE:** Update VSCode before installing the extension.
 
 The latest version of the extension can be installed from the VSCode [marketplace](). 
+
+# Settings
+| Name 	| Description 	| Default 	|
+|---	|---	|---	|
+| workspace.filterPredictionsEnabled 	| If enabled, based on the file's imported names, irrelevent type predictions will be filtered out. Disable this setting if you would like to get all the predicted types regardless of relevancy. 	| true 	|
+| workspace.typeCheckEnabled 	| If enabled, type checking will be performed for predicted types. This will result in longer waiting times, but will lead to more precise type suggestions. **[Not supported yet!]** 	| false 	|
 
 # Privacy
 Privacy is very prominent for us. That is, we do consider the following privacy concerns:

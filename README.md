@@ -3,6 +3,8 @@ This extension provides machine learning-based type autocompletion for Python, w
 
 - [Core Features](#core-features)
 - [Usage](#usage)
+  - [Quick Start](#quick-start)
+  - [Considerations](#considerations)
 - [Installation](#installation)
 - [Privacy](#privacy)
 - [Limitations](#limitations)
@@ -22,7 +24,8 @@ This extension provides machine learning-based type autocompletion for Python, w
 - Simple, fairly fast and easy to use.
 
 # Usage
-## Quick start
+## Quick Start
+![](images/extension-quick-start.gif)
 
 ## Considerations
 - Do not edit the selected source file after running the Type4Py extension. That is, add the relevant predicted types to the code, save the file and then edit as you wish. We will drop this consideration once the [caching solution](#roadmap) is implemented.

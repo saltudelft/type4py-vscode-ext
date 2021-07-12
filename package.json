@@ -51,7 +51,12 @@
 				"workspace.typeCheckEnabled": {
 					"type": "boolean",
 					"default": false,
-					"description": "If enabled, type checking will be performed for type annotation suggestions. This will result in longer waiting times, but will lead to more accurate annotation suggestions."
+					"description": "If enabled, type checking will be performed for predicted types. This will result in longer waiting times, but will lead to more precise type suggestions. [Not supported yet!]"
+				},
+				"workspace.filterPredictionsEnabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "If enabled, based on the file's imported names, irrelevent type predictions will be filtered out. Disable this setting if you would like to get all the predicted types regardless of relevancy."
 				}
 			}
 		}

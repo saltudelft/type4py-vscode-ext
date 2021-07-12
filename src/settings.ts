@@ -6,6 +6,7 @@ import { workspace, Event, EventEmitter } from "vscode";
 export class Type4PySettings {
 
     private _tcEnabled = false;
+    private _filterPreds = true;
 
     constructor() {
         workspace.onDidChangeConfiguration(() => {
@@ -18,6 +19,10 @@ export class Type4PySettings {
     public get tcEnabled() {
         return this._tcEnabled;
     }
+
+    public get fliterPredsEnabled() {
+        return this._filterPreds;
+    }
     
     public readonly settingsUpdated = new EventEmitter<void>();
 
@@ -27,9 +32,14 @@ export class Type4PySettings {
 
     private initialize() {
         const tcEnable: boolean | undefined = workspace.getConfiguration('workspace').get('typeCheckEnabled');
+        const filterPreds: boolean | undefined = workspace.getConfiguration('workspace').get('fliterPredictionsEnabled');
 
         if (tcEnable !== undefined) {
             this._tcEnabled = tcEnable;
+        }
+
+        if (filterPreds !== undefined) {
+            this._filterPreds = filterPreds;
         }
     }
 

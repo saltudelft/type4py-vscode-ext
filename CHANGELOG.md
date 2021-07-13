@@ -10,5 +10,6 @@ All notable changes to the [Type4Py's VSCode extension](https://github.com/saltu
 - Type autocompletion for parameters and return type functions/class methods.
 - Type autocompletion for variables (i.e. module-level variables, class variables, and local variables).
 - Exception handlings and considering limitations.
+- Adding settings for type-checking and filtering out type predictions.
 - Adding README
 

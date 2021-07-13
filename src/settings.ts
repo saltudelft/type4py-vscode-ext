@@ -32,7 +32,7 @@ export class Type4PySettings {
 
     private initialize() {
         const tcEnable: boolean | undefined = workspace.getConfiguration('workspace').get('typeCheckEnabled');
-        const filterPreds: boolean | undefined = workspace.getConfiguration('workspace').get('fliterPredictionsEnabled');
+        const filterPreds: boolean | undefined = workspace.getConfiguration('workspace').get('filterPredictionsEnabled');
 
         if (tcEnable !== undefined) {
             this._tcEnabled = tcEnable;

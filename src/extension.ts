@@ -70,10 +70,12 @@ async function infer(settings: Type4PySettings): Promise<void> {
 
             // Send request
             console.log(`Sending request with TC: ${settings.tcEnabled}`);
+            console.log(`Sending request with FP: ${settings.fliterPredsEnabled}`)
             const inferResult = await axios.post<InferApiPayload>(INFER_URL_BASE, fileContents,
                 { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT, params: {
                     // TODO: check with server side; this can be passed as boolean
-                    tc: settings.tcEnabled ? 0 : 0
+                    tc: settings.tcEnabled ? 0 : 0,
+                    fp: settings.fliterPredsEnabled ? 1 : 0
                 }}
             );
             console.log(inferResult);

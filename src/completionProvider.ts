@@ -10,11 +10,16 @@ import {
     TextDocument,
     Range,
     window,
+    Command,
+    commands,
+    workspace
 } from "vscode";
 import { FunctionInferData, VariableInferData  } from "./type4pyData";
 import { paramHintTrigger, returnHintTrigger } from './pythonData';
 import typestore from './typestore';
 import { isWithinLineBounds } from "./utils";
+import axios from "axios";
+import { TELEMETRY_REQ_TIMEOUT, TELEMETRY_URL_BASE } from "./constants";
 
 
 export abstract class CompletionProvider {
@@ -54,7 +59,7 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
         const items: CompletionItem[] = [];
         const line = doc.lineAt(pos);
         const precedingText = line.text.substring(0, pos.character - 1).trim();
-        
+
         // Check if pattern matches parameters
         if (this.shouldProvideItems(precedingText, pos, doc) && !token.isCancellationRequested) {
             // Extract parameter
@@ -64,7 +69,7 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
 
                 // Map parameter data to completion items (if present)
                 inferData?.params[param].forEach((annotation, id) => {
-                    items.push(annotationToCompletionItem(annotation, id));
+                    items.push(annotationToCompletionItem(annotation, id, TypeSlots.Parameter));
                 });
             }
         }
@@ -124,7 +129,7 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
             
             // Map return type data to completion items (if present)
             inferData?.returnTypes.forEach((annotation, id) => {
-                items.push(annotationToCompletionItem(annotation, id));
+                items.push(annotationToCompletionItem(annotation, id, TypeSlots.ReturnType));
             });
         }
         return Promise.resolve(new CompletionList(items, false));
@@ -163,7 +168,7 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
             
             // Map variable data to completion items (if present)
             inferData?.annotations.forEach((annotation, id) => {
-                items.push(annotationToCompletionItem(annotation, id));
+                items.push(annotationToCompletionItem(annotation, id, TypeSlots.Variable));
             });
         }
         return Promise.resolve(new CompletionList(items, false));
@@ -250,6 +255,45 @@ function findVariableInferenceDataForActiveFilePos(line: TextLine): VariableInfe
     return undefined;
 }
 
+enum TypeSlots {
+    Parameter = "Parameter",
+    ReturnType = "ReturnType",
+    Variable = 'Variable'
+}
+
+
+const comm = commands.registerCommand('submitAcceptedType', (acceptedType: string, rank: number,
+     typeSlot: TypeSlots) => {
+    console.log(`Selected ${acceptedType} for ${typeSlot} with ${rank}`);
+    const telemResult = axios.get(TELEMETRY_URL_BASE,
+        {timeout: TELEMETRY_REQ_TIMEOUT , params: {
+            at: acceptedType,
+            r: rank,
+            ts: typeSlot,
+            fp: workspace.getConfiguration('workspace').get('filterPredictionsEnabled')? 1 : 0
+        }}
+    );
+});
+
+export class AcceptedTypeCompletionItem implements Command {
+
+    rank: number;
+    selectedType: string;
+    typeSlot: TypeSlots;
+
+    title = "AcceptedTypeCompletionItem";
+    command = 'submitAcceptedType';
+    arguments: any[];
+
+    constructor(selectedType: string, rank: number, typeSlot: TypeSlots) {
+        this.rank = rank;
+        this.selectedType = selectedType;
+        this.typeSlot = typeSlot;
+        this.arguments = [this.selectedType, this.rank + 1, this.typeSlot];
+
+    }
+}
+
 /**
  * Helper function to transform an annotation at the given ID (lower = more confidence)
  * to a CompletionItem to provide as autocomplete.
@@ -258,8 +302,10 @@ function findVariableInferenceDataForActiveFilePos(line: TextLine): VariableInfe
  * @param id Index
  * @returns CompletionItem
  */
-function annotationToCompletionItem(annotation: string, id: number): CompletionItem {
+function annotationToCompletionItem(annotation: string, id: number, typeSlot: TypeSlots): CompletionItem {
     const item = new CompletionItem(annotation, CompletionItemKind.TypeParameter);
+    item.command = new AcceptedTypeCompletionItem(annotation, id, typeSlot);
+    
     item.sortText = `${id}`;
     return item;
 }

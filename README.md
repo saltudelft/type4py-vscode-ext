@@ -50,9 +50,11 @@ The latest version of the extension can be installed from the VSCode [marketplac
 |---	|---	|---	|
 | workspace.filterPredictionsEnabled 	| If enabled, based on the file's imported names, irrelevent type predictions will be filtered out. Disable this setting if you would like to get all the predicted types regardless of relevancy. 	| true 	|
 | workspace.typeCheckEnabled 	| If enabled, type checking will be performed for predicted types. This will result in longer waiting times, but will lead to more precise type suggestions. **[Not supported yet!]** 	| false 	|
+| workspace.shareAcceptedPredictions | If enabled, accepted type predictions will be shared with us for research purposes and improving our Type4Py model. Note that the value of VSCode Telemetry overrides this setting. Read our privacy statement [here](PRIVACY.md). | false
+
 
 # Privacy
-Privacy is very prominent for us. You can read our privacy statements [here](https://github.com/saltudelft/type4py-vscode-ext/blob/telemetry/PRIVACY.md).
+Privacy is very prominent for us. You can read our privacy statements [here](PRIVACY.md).
 
 # Limitations
 To accommodate fair use and availability for all users, the extension has currently the following limitations:

@@ -52,9 +52,7 @@ The latest version of the extension can be installed from the VSCode [marketplac
 | workspace.typeCheckEnabled 	| If enabled, type checking will be performed for predicted types. This will result in longer waiting times, but will lead to more precise type suggestions. **[Not supported yet!]** 	| false 	|
 
 # Privacy
-Privacy is very prominent for us. That is, we do consider the following privacy concerns:
-- We do NOT store private code on our server.
-- We do NOT store any information from users such as location, system info, usage stats, coding preferences, etc.
+Privacy is very prominent for us. You can read our privacy statements [here](https://github.com/saltudelft/type4py-vscode-ext/blob/telemetry/PRIVACY.md).
 
 # Limitations
 To accommodate fair use and availability for all users, the extension has currently the following limitations:

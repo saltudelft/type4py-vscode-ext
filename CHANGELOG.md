@@ -11,5 +11,6 @@ All notable changes to the [Type4Py's VSCode extension](https://github.com/saltu
 - Type autocompletion for variables (i.e. module-level variables, class variables, and local variables).
 - Exception handlings and considering limitations.
 - Adding settings for type-checking and filtering out type predictions.
+- Gathering telemetry data for accepted type predictions based on the user's consent.
 - Adding README
 

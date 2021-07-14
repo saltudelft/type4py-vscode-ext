@@ -54,7 +54,7 @@
 				"workspace.typeCheckEnabled": {
 					"type": "boolean",
 					"default": false,
-					"description": "If enabled, type checking will be performed for predicted types. This will result in longer waiting times, but will lead to more precise type suggestions. [Not supported yet!]"
+					"description": " [NOT SUPPORTED YET!] If enabled, type checking will be performed for predicted types. This will result in longer waiting times, but will lead to more precise type suggestions."
 				},
 				"workspace.filterPredictionsEnabled": {
 					"type": "boolean",

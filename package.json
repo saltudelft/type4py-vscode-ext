@@ -3,14 +3,14 @@
 	"displayName": "Type4Py",
 	"version": "0.1.0",
 	"description": "Machine learning-based type autocompletion for Python",
-	"icon": "",
+	"icon": "images/icon.ico",
 	"publisher": "saltud",
 	"homepage": "https://type4py.com/",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/saltudelft/type4py-vscode-ext"
 	},
-	"license": "SEE LICENSE IN LICENSE.txt",
+	"license": "MIT",
 	"bugs": {"url": "https://github.com/saltudelft/type4py-vscode-ext/issues"},
 	"categories": [
 		"Programming Languages",

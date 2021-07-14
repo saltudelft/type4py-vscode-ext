@@ -88,6 +88,7 @@ Here are the desirable features for future releases.
 ## Researchers & Developers
 - Amir M. Mir (@mir-am)
 - Evaldas Latoškinas (@elatoskinas)
+
 ## Supervisors
 - Sebastian Proksch (@proksch)
 - Georgios Gousios (@gousiosg)

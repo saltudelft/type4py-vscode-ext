@@ -2,23 +2,26 @@
 	"name": "type4py",
 	"displayName": "Type4Py",
 	"version": "0.1.0",
-	"description": "ML-based type annotation completion for Python",
+	"description": "Machine learning-based type autocompletion for Python",
 	"icon": "",
-	"publisher": "amir-mir",
+	"publisher": "saltud",
+	"homepage": "https://type4py.com/",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/saltudelft/type4py-vscode-ext"
 	},
-	"license": "MIT License",
+	"license": "SEE LICENSE IN LICENSE.txt",
+	"bugs": {"url": "https://github.com/saltudelft/type4py-vscode-ext/issues"},
 	"categories": [
-		"Programming Languages"
+		"Programming Languages",
+		"Machine Learning"
 	],
 	"keywords": [
 		"Python",
 		"typehint",
-		"completion",
+		"machinelearning",
 		"autocompletion",
-		"parameter"
+		"typeannotations"
 	],
 	"engines": {
 		"vscode": "^1.50.0"

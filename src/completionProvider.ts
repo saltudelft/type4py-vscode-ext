@@ -10,16 +10,13 @@ import {
     TextDocument,
     Range,
     window,
-    Command,
-    commands,
-    workspace
+    Command
 } from "vscode";
 import { FunctionInferData, VariableInferData  } from "./type4pyData";
 import { paramHintTrigger, returnHintTrigger } from './pythonData';
 import typestore from './typestore';
 import { isWithinLineBounds } from "./utils";
-import axios from "axios";
-import { TELEMETRY_REQ_TIMEOUT, TELEMETRY_URL_BASE } from "./constants";
+import { TypeSlots } from "./pythonData";
 
 
 export abstract class CompletionProvider {
@@ -254,26 +251,6 @@ function findVariableInferenceDataForActiveFilePos(line: TextLine): VariableInfe
 
     return undefined;
 }
-
-enum TypeSlots {
-    Parameter = "Parameter",
-    ReturnType = "ReturnType",
-    Variable = 'Variable'
-}
-
-
-const comm = commands.registerCommand('submitAcceptedType', (acceptedType: string, rank: number,
-     typeSlot: TypeSlots) => {
-    console.log(`Selected ${acceptedType} for ${typeSlot} with ${rank}`);
-    const telemResult = axios.get(TELEMETRY_URL_BASE,
-        {timeout: TELEMETRY_REQ_TIMEOUT , params: {
-            at: acceptedType,
-            r: rank,
-            ts: typeSlot,
-            fp: workspace.getConfiguration('workspace').get('filterPredictionsEnabled')? 1 : 0
-        }}
-    );
-});
 
 export class AcceptedTypeCompletionItem implements Command {
 

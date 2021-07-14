@@ -7,6 +7,7 @@ export class Type4PySettings {
 
     private _tcEnabled = false;
     private _filterPreds = true;
+    private _shareAcceptedPreds = false;
 
     constructor() {
         workspace.onDidChangeConfiguration(() => {
@@ -23,6 +24,14 @@ export class Type4PySettings {
     public get fliterPredsEnabled() {
         return this._filterPreds;
     }
+
+    public get shareAcceptedPredsEnabled() {
+        return this._shareAcceptedPreds;
+    }
+
+    public set setShareAcceptedPreds(value: boolean) {
+        this._shareAcceptedPreds = value;
+    }
     
     public readonly settingsUpdated = new EventEmitter<void>();
 
@@ -33,7 +42,8 @@ export class Type4PySettings {
     private initialize() {
         const tcEnable: boolean | undefined = workspace.getConfiguration('workspace').get('typeCheckEnabled');
         const filterPreds: boolean | undefined = workspace.getConfiguration('workspace').get('filterPredictionsEnabled');
-
+        const shareAcceptPreds: boolean | undefined = workspace.getConfiguration('workspace').get('shareAcceptedPredictions');
+        
         if (tcEnable !== undefined) {
             this._tcEnabled = tcEnable;
         }
@@ -41,6 +51,11 @@ export class Type4PySettings {
         if (filterPreds !== undefined) {
             this._filterPreds = filterPreds;
         }
+
+        if (shareAcceptPreds !== undefined) {
+            this._shareAcceptedPreds = shareAcceptPreds;
+        }
+
     }
 
 }

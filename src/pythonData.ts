@@ -81,3 +81,9 @@ const typeCategories: { [key: string]: TypeCategory } = {
     string: TypeCategory.Basic,
     tuple: TypeCategory.Collection
 };
+
+export enum TypeSlots {
+    Parameter = "Parameter",
+    ReturnType = "ReturnType",
+    Variable = 'Variable'
+};

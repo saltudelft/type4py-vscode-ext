@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { ParamHintCompletionProvider, ReturnHintCompletionProvider, VariableCompletionProvider } from './completionProvider';
 import { InferApiData, InferApiPayload, transformInferApiData } from "./type4pyData";
-import { paramHintTrigger, returnHintTrigger } from "./pythonData";
+import { paramHintTrigger, returnHintTrigger, TypeSlots } from "./pythonData";
 import { Type4PySettings } from './settings';
 import typestore from './typestore';
 import axios from 'axios';
-import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE } from './constants';
+import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, TELEMETRY_REQ_TIMEOUT, TELEMETRY_URL_BASE } from './constants';
 import * as fs from 'fs';
 import { ERROR_MESSAGES } from './messages';
 import * as path from 'path';
@@ -34,21 +34,53 @@ export function activate(context: vscode.ExtensionContext) {
         ),
     );
 
-    
     // Register command for inferring type hints
-    const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => { infer(settings) });
+    const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => { infer(settings, context) });
     context.subscriptions.push(inferCommand);
+    
+    // Sharing accepted type predictions based on the user's consent
+    const comm = vscode.commands.registerCommand('submitAcceptedType', (acceptedType: string, rank: number,
+        typeSlot: TypeSlots) => {
+       console.log(`Selected ${acceptedType} for ${typeSlot} with ${rank}`);
+       if (settings.shareAcceptedPredsEnabled) {
+            const telemResult = axios.get(TELEMETRY_URL_BASE,
+                {timeout: TELEMETRY_REQ_TIMEOUT , params: {
+                    at: acceptedType,
+                    r: rank,
+                    ts: typeSlot,
+                    fp :settings.fliterPredsEnabled ? 1 : 0
+                    }}
+                );
+       }
+       
+   });
+
+   if (vscode.env.isTelemetryEnabled) {
+    settings.setShareAcceptedPreds = vscode.env.isTelemetryEnabled;
+    } else {
+        // Sharing accepted type predctions based on the user's consent
+        vscode.window.showInformationMessage("Would you like to share accepted type predictions with us for research purposes?",
+        ...["Yes", "No"]).then((answer) => {
+            if (answer === "Yes") {
+                settings.setShareAcceptedPreds = true;
+            } else {
+                settings.setShareAcceptedPreds = false;
+            }}
+        )
+    }
 }
 
 // Called when the extension is deactivated.
-export function deactivate() {}
+export function deactivate(context: vscode.ExtensionContext) {
+
+}
 
 /**
  * Type4Py Infer command function
  *
  * @param settings Type4Py settings to use
  */
-async function infer(settings: Type4PySettings): Promise<void> {
+async function infer(settings: Type4PySettings, context: vscode.ExtensionContext): Promise<void> {
     vscode.window.showInformationMessage("Inferring type annotations for current file...");
 
     // Get current file being editted

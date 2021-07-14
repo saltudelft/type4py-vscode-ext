@@ -232,7 +232,7 @@ function findVariableInferenceDataForActiveFilePos(line: TextLine): VariableInfe
         const splitData = line.text.split("=");
 
         if (splitData.length > 0) {
-            const variableName = splitData[0].replace(":", "").trim();
+            const variableName = splitData[0].replace(":", "").replace("self.", "").trim();
             const annotationData = typestore.get(activePath);
 
             if (annotationData) {

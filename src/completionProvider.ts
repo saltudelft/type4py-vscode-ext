@@ -66,7 +66,8 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
 
                 // Map parameter data to completion items (if present)
                 inferData?.params[param].forEach((annotation, id) => {
-                    items.push(annotationToCompletionItem(annotation, id, TypeSlots.Parameter));
+                    items.push(annotationToCompletionItem(annotation, id, TypeSlots.Parameter, param,
+                                                          line.lineNumber + 1));
                 });
             }
         }
@@ -126,7 +127,8 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
             
             // Map return type data to completion items (if present)
             inferData?.returnTypes.forEach((annotation, id) => {
-                items.push(annotationToCompletionItem(annotation, id, TypeSlots.ReturnType));
+                items.push(annotationToCompletionItem(annotation, id, TypeSlots.ReturnType, inferData.name,
+                                                      line.lineNumber + 1));
             });
         }
         return Promise.resolve(new CompletionList(items, false));
@@ -165,7 +167,8 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
             
             // Map variable data to completion items (if present)
             inferData?.annotations.forEach((annotation, id) => {
-                items.push(annotationToCompletionItem(annotation, id, TypeSlots.Variable));
+                items.push(annotationToCompletionItem(annotation, id, TypeSlots.Variable, inferData.name,
+                                                      line.lineNumber + 1));
             });
         }
         return Promise.resolve(new CompletionList(items, false));
@@ -257,16 +260,22 @@ export class AcceptedTypeCompletionItem implements Command {
     rank: number;
     selectedType: string;
     typeSlot: TypeSlots;
+    identifierName: string; // Can be name of a variable, a parameter, or a function.
+    typeSlotLineNo: number;
 
     title = "AcceptedTypeCompletionItem";
     command = 'submitAcceptedType';
     arguments: any[];
 
-    constructor(selectedType: string, rank: number, typeSlot: TypeSlots) {
+    constructor(selectedType: string, rank: number, typeSlot: TypeSlots,
+                identifierName: string, typeSlotLineNo: number) {
         this.rank = rank;
         this.selectedType = selectedType;
         this.typeSlot = typeSlot;
-        this.arguments = [this.selectedType, this.rank + 1, this.typeSlot];
+        this.identifierName = identifierName;
+        this.typeSlotLineNo = typeSlotLineNo;
+        this.arguments = [this.selectedType, this.rank + 1, this.typeSlot, this.identifierName,
+                          this.typeSlotLineNo];
 
     }
 }
@@ -279,9 +288,10 @@ export class AcceptedTypeCompletionItem implements Command {
  * @param id Index
  * @returns CompletionItem
  */
-function annotationToCompletionItem(annotation: string, id: number, typeSlot: TypeSlots): CompletionItem {
+function annotationToCompletionItem(annotation: string, id: number, typeSlot: TypeSlots,
+                                    identifierName: string, typeSlotLineNo: number): CompletionItem {
     const item = new CompletionItem(annotation, CompletionItemKind.TypeParameter);
-    item.command = new AcceptedTypeCompletionItem(annotation, id, typeSlot);
+    item.command = new AcceptedTypeCompletionItem(annotation, id, typeSlot, identifierName, typeSlotLineNo);
     
     item.sortText = `${id}`;
     return item;

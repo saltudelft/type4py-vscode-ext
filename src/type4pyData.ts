@@ -58,7 +58,8 @@ export interface InferApiPayload {
 
 export interface InferApiData extends WithInferFunctions, WithInferVariables {
     classes: Array<InferApiClass>,
-    mod_var_ln: InferApiVarLocations
+    mod_var_ln: InferApiVarLocations,
+    session_id: string
 }
 
 /** TYPE SUGGESTION EXTENSION DATA TYPES */
@@ -67,6 +68,9 @@ export interface InferApiData extends WithInferFunctions, WithInferVariables {
  * Data type for function inference data.
  */
  export interface FunctionInferData {
+    /** Name of the function */
+    name: string
+
     /** Tuple: first & last line of function */
     lines: [number, number]
 
@@ -152,9 +156,10 @@ export function transformInferApiData(apiData: InferApiData): InferData {
                 return annotation[0];
             });
         }
-
+        
         // Map to FunctionInferData object
         const funcEntry: FunctionInferData = {
+            name: func.name,
             lines: [func.fn_lc[0][0], func.fn_lc[1][0]],
             returnTypes: returnTypes,
             params: paramTypes

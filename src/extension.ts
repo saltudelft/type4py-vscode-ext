@@ -40,15 +40,19 @@ export function activate(context: vscode.ExtensionContext) {
     
     // Sharing accepted type predictions based on the user's consent
     const comm = vscode.commands.registerCommand('submitAcceptedType', (acceptedType: string, rank: number,
-        typeSlot: TypeSlots) => {
+        typeSlot: TypeSlots, identifierName: string, typeSlotLineNo: number) => {
        console.log(`Selected ${acceptedType} for ${typeSlot} with ${rank}`);
        if (settings.shareAcceptedPredsEnabled) {
+            const f = vscode.window.activeTextEditor?.document.fileName!;
             const telemResult = axios.get(TELEMETRY_URL_BASE,
                 {timeout: TELEMETRY_REQ_TIMEOUT , params: {
                     at: acceptedType,
                     r: rank,
                     ts: typeSlot,
-                    fp :settings.fliterPredsEnabled ? 1 : 0
+                    fp: settings.fliterPredsEnabled ? 1 : 0,
+                    idn: identifierName,
+                    tsl: typeSlotLineNo,
+                    sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base) 
                     }}
                 );
        }
@@ -71,7 +75,7 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // Called when the extension is deactivated.
-export function deactivate(context: vscode.ExtensionContext) {
+export function deactivate() {
 
 }
 
@@ -130,6 +134,9 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 vscode.window.showInformationMessage(
                     `Type prediction for ${relativePath} completed!`
                 );
+                context.workspaceState.update(relativePath,
+                                              inferResult.data.response['session_id'])
+                console.log(context.workspaceState.get(relativePath))
             }
         } catch (error) {
             console.error(error);

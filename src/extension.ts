@@ -112,7 +112,7 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
     } else {
         try {
             const relativePath = path.parse(vscode.workspace.asRelativePath(activeDocument.fileName)).base;
-            vscode.window.showInformationMessage("Inferring type annotations for current file...");
+            vscode.window.showInformationMessage(`Inferring type annotations for the file ${relativePath}`);
 
             // Read file contents
             const currentPath = activeDocument.fileName;

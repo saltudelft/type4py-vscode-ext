@@ -10,7 +10,6 @@ This extension provides machine learning-based type autocompletion for Python, w
 - [Settings](#settings)
 - [Privacy](#privacy)
 - [Limitations](#limitations)
-- [Design](#design)
 - [Support](#support)
 - [Development](#development)
 - [Roadmap](#roadmap)
@@ -60,9 +59,6 @@ To accommodate fair use and availability for all users, the extension has curren
 - **File size**: Python source files of up to 1K LoC can be processed.
 
 <!-- # Known Issues -->
-
-# Design
-![](images/design.png)
 
 # Support
 Issues and errors can be reported [here](https://github.com/saltudelft/type4py-vscode-ext/issues).

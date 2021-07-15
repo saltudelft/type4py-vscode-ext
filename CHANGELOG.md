@@ -3,6 +3,14 @@ All notable changes to the [Type4Py's VSCode extension](https://github.com/saltu
 
 ## [Unreleased]
 
+## [0.1.2] - 2021-07-15
+### Added
+- Some improvements to README and the package file
+
+### Fixed
+- The list of predicted types changes when inserting an extra space after the annotation syntax, i.e, `:` or `->`.
+
+
 ## [0.1.0] - 2021-07-14
 ### Added
 - Querying the pre-trained [Type4Py](https://github.com/saltudelft/type4py) model on the server.

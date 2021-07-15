@@ -8,6 +8,7 @@ export class Type4PySettings {
     //private _tcEnabled = false;
     private _filterPreds = true;
     private _shareAcceptedPreds = false;
+    private _autoInfer = false;
 
     constructor() {
         workspace.onDidChangeConfiguration(() => {
@@ -28,6 +29,9 @@ export class Type4PySettings {
     public get shareAcceptedPredsEnabled() {
         return this._shareAcceptedPreds;
     }
+    public get autoInfer() {
+        return this._autoInfer;
+    }
 
     public set setShareAcceptedPreds(value: boolean) {
         this._shareAcceptedPreds = value;
@@ -43,6 +47,7 @@ export class Type4PySettings {
         //const tcEnable: boolean | undefined = workspace.getConfiguration('workspace').get('typeCheckEnabled');
         const filterPreds: boolean | undefined = workspace.getConfiguration('workspace').get('filterPredictionsEnabled');
         const shareAcceptPreds: boolean | undefined = workspace.getConfiguration('workspace').get('shareAcceptedPredictions');
+        const autoInfer: boolean | undefined = workspace.getConfiguration('workspace').get('autoInferEnabled');
         
         // if (tcEnable !== undefined) {
         //     this._tcEnabled = tcEnable;
@@ -56,6 +61,8 @@ export class Type4PySettings {
             this._shareAcceptedPreds = shareAcceptPreds;
         }
 
+        if (autoInfer !== undefined) {
+            this._autoInfer = autoInfer;
+        }
     }
-
 }

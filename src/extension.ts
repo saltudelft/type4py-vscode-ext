@@ -38,6 +38,15 @@ export function activate(context: vscode.ExtensionContext) {
     const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => { infer(settings, context) });
     context.subscriptions.push(inferCommand);
     
+    // Automatic type inference when opening a Python source file.
+    vscode.workspace.onDidOpenTextDocument( async () => {
+        if (settings.autoInfer) {
+            if (context.workspaceState.get(vscode.window.activeTextEditor?.document.fileName!) === undefined) {
+                    infer(settings, context, true)
+                }
+            }
+         });
+    
     // Sharing accepted type predictions based on the user's consent
     const comm = vscode.commands.registerCommand('submitAcceptedType', (acceptedType: string, rank: number,
         typeSlot: TypeSlots, identifierName: string, typeSlotLineNo: number) => {
@@ -84,9 +93,9 @@ export function deactivate() {
  *
  * @param settings Type4Py settings to use
  */
-async function infer(settings: Type4PySettings, context: vscode.ExtensionContext): Promise<void> {
-    vscode.window.showInformationMessage("Inferring type annotations for current file...");
-
+async function infer(settings: Type4PySettings, context: vscode.ExtensionContext,
+                     auto: boolean=false): Promise<void> {
+    
     // Get current file being editted
     const activeDocument = vscode.window.activeTextEditor?.document;
 
@@ -96,11 +105,14 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
     // } else if (activeDocument.lineCount > 1000) {
     //     vscode.window.showErrorMessage(ERROR_MESSAGES.lineCountExceeded);
     } else if (activeDocument.languageId !== "python") {
-        vscode.window.showErrorMessage(ERROR_MESSAGES.nonPythonFile);
+        if (auto === false){ vscode.window.showErrorMessage(ERROR_MESSAGES.nonPythonFile); }
     } else if (activeDocument.getText().length === 0) {
-        vscode.window.showErrorMessage(ERROR_MESSAGES.emptyFile);
+        if (auto === false){ vscode.window.showErrorMessage(ERROR_MESSAGES.emptyFile); }
     } else {
         try {
+            const relativePath = path.parse(vscode.workspace.asRelativePath(activeDocument.fileName)).base;
+            vscode.window.showInformationMessage(`Inferring type annotations for the file ${relativePath}`);
+
             // Read file contents
             const currentPath = activeDocument.fileName;
             const fileContents = fs.readFileSync(currentPath);
@@ -132,13 +144,14 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 console.log(transformedInferResultData);
                 typestore.add(currentPath, transformedInferResultData);
                 
-                const relativePath = path.parse(vscode.workspace.asRelativePath(activeDocument.fileName)).base;
                 vscode.window.showInformationMessage(
                     `Type prediction for ${relativePath} completed!`
                 );
+
                 context.workspaceState.update(relativePath,
                                               inferResult.data.response['session_id'])
-                console.log(context.workspaceState.get(relativePath))
+                context.workspaceState.update(activeDocument.fileName, true);
+
             }
         } catch (error) {
             console.error(error);

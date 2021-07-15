@@ -40,7 +40,6 @@ export function activate(context: vscode.ExtensionContext) {
     
     // Automatic type inference when opening a Python source file.
     vscode.workspace.onDidOpenTextDocument( async () => {
-        //const a = context.workspaceState.get(vscode.window.activeTextEditor?.document.fileName!);
         if (settings.autoInfer) {
             if (context.workspaceState.get(vscode.window.activeTextEditor?.document.fileName!) === undefined) {
                     infer(settings, context, true)

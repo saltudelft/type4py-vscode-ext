@@ -45,6 +45,7 @@ The latest version of the extension can be installed from the [Visual Studio Mar
 # Settings
 | Name 	| Description 	| Default 	|
 |---	|---	|---	|
+| workspace.autoInferEnabled | If enabled, it automatically infers type annotations when opening a Python source file. Note that automatic inference works only once for a newly opened file. | false |
 | workspace.filterPredictionsEnabled 	| If enabled, based on the file's imported names, irrelevent type predictions will be filtered out. Disable this setting if you would like to get all the predicted types regardless of relevancy. 	| true 	|
 | workspace.shareAcceptedPredictions | If enabled, accepted type predictions will be shared with us for research purposes and improving our Type4Py model. Note that the value of VSCode Telemetry overrides this setting. Read our privacy statement [here](PRIVACY.md). | false
 

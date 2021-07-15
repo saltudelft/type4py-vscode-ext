@@ -53,6 +53,11 @@
 		"configuration": {
 			"title": "Type4Py",
 			"properties": {
+				"workspace.autoInferEnabled" : {
+					"type": "boolean",
+					"default": false,
+					"description": "If enabled, it automatically infers type annotations when opening a Python source file. Note that automatic inference works only once for a newly opened file."
+				},
 				"workspace.filterPredictionsEnabled": {
 					"type": "boolean",
 					"default": true,

@@ -43,7 +43,7 @@ This extension provides machine learning-based type autocompletion for Python, w
 # Installation
 **NOTE:** Update VSCode before installing the extension.
 
-The latest version of the extension can be installed from the VSCode [marketplace](). 
+The latest version of the extension can be installed from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=saltud.type4py).
 
 # Settings
 | Name 	| Description 	| Default 	|

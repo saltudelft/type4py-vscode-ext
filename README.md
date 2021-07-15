@@ -10,7 +10,6 @@ This extension provides machine learning-based type autocompletion for Python, w
 - [Settings](#settings)
 - [Privacy](#privacy)
 - [Limitations](#limitations)
-- [Known Issues](#known-issues)
 - [Design](#design)
 - [Support](#support)
 - [Development](#development)
@@ -60,8 +59,7 @@ To accommodate fair use and availability for all users, the extension has curren
 <!-- - **Rate limit**: 5 requests per hour and 100 requests per day. -->
 - **File size**: Python source files of up to 1K LoC can be processed.
 
-# Known Issues
-- When performing type autocompletion, a space after annotation syntax symbols like `:` or `->` changes the list of predicted types based on the matched pattern.
+<!-- # Known Issues -->
 
 # Design
 ![](images/design.png)

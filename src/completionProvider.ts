@@ -292,7 +292,8 @@ function annotationToCompletionItem(annotation: string, id: number, typeSlot: Ty
                                     identifierName: string, typeSlotLineNo: number): CompletionItem {
     const item = new CompletionItem(annotation, CompletionItemKind.TypeParameter);
     item.command = new AcceptedTypeCompletionItem(annotation, id, typeSlot, identifierName, typeSlotLineNo);
-    
+    item.filterText = ` ${item.label}`; // Do not remove filter after adding single whitespace
+    item.insertText = ` ${item.label}`; // Add whitespace after annotation
     item.sortText = `${id}`;
     return item;
 }

@@ -82,11 +82,8 @@ Here are the desirable features for future releases.
 - Enabling the type-checking process for the Type4Py's predictions using [mypy](https://github.com/python/mypy), preferably at the client-side.
 
 # Contributors
-## Researchers & Developers
 - Amir M. Mir (@mir-am)
 - Evaldas Latoškinas (@elatoskinas)
-
-## Supervisors
 - Sebastian Proksch (@proksch)
 - Georgios Gousios (@gousiosg)
 

@@ -11,7 +11,9 @@
 		"url": "https://github.com/saltudelft/type4py-vscode-ext"
 	},
 	"license": "MIT",
-	"bugs": {"url": "https://github.com/saltudelft/type4py-vscode-ext/issues"},
+	"bugs": {
+		"url": "https://github.com/saltudelft/type4py-vscode-ext/issues"
+	},
 	"categories": [
 		"Programming Languages",
 		"Machine Learning"
@@ -76,9 +78,8 @@
 		"compile": "webpack --mode none",
 		"watch": "webpack --mode none --watch",
 		"postinstall": "node node_modules/vscode/bin/install",
-		"just-test": "node node_modules/vscode/bin/test",
-		"test-compile": "tsc -p ./ && npm run compile",
-		"test": "npm run test-compile && node node_modules/vscode/bin/test"
+		"test": "node node_modules/vscode/bin/test",
+		"test-compile": "npm run compile && npm run test"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.3",

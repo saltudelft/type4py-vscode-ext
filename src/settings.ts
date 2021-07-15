@@ -5,7 +5,7 @@ import { workspace, Event, EventEmitter } from "vscode";
  */
 export class Type4PySettings {
 
-    private _tcEnabled = false;
+    //private _tcEnabled = false;
     private _filterPreds = true;
     private _shareAcceptedPreds = false;
 
@@ -17,9 +17,9 @@ export class Type4PySettings {
         this.initialize();
     }
 
-    public get tcEnabled() {
-        return this._tcEnabled;
-    }
+    // public get tcEnabled() {
+    //     return this._tcEnabled;
+    // }
 
     public get fliterPredsEnabled() {
         return this._filterPreds;
@@ -40,13 +40,13 @@ export class Type4PySettings {
     }
 
     private initialize() {
-        const tcEnable: boolean | undefined = workspace.getConfiguration('workspace').get('typeCheckEnabled');
+        //const tcEnable: boolean | undefined = workspace.getConfiguration('workspace').get('typeCheckEnabled');
         const filterPreds: boolean | undefined = workspace.getConfiguration('workspace').get('filterPredictionsEnabled');
         const shareAcceptPreds: boolean | undefined = workspace.getConfiguration('workspace').get('shareAcceptedPredictions');
         
-        if (tcEnable !== undefined) {
-            this._tcEnabled = tcEnable;
-        }
+        // if (tcEnable !== undefined) {
+        //     this._tcEnabled = tcEnable;
+        // }
 
         if (filterPreds !== undefined) {
             this._filterPreds = filterPreds;

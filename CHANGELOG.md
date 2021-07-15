@@ -2,6 +2,17 @@
 All notable changes to the [Type4Py's VSCode extension](https://github.com/saltudelft/type4py-vscode-ext) will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Automatic type inference when a Python file is opened. A setting is created for this, which is false by default.
+- Included the name of the file in the information window when type inference is invoked.
+- Some revision to README.
+
+### Changed
+- Moved the design figure from README to a separate file, `DESIGN.md`.
+
+### Removed
+- Removed the 1K LoC limitation for Python source files.
+- Removed type-checking setting until we support it.
 
 ## [0.1.2] - 2021-07-15
 ### Added

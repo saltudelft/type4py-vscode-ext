@@ -9,7 +9,6 @@ This extension provides machine learning-based type autocompletion for Python, w
 - [Installation](#installation)
 - [Settings](#settings)
 - [Privacy](#privacy)
-- [Limitations](#limitations)
 - [Support](#support)
 - [Development](#development)
 - [Roadmap](#roadmap)
@@ -54,10 +53,10 @@ The latest version of the extension can be installed from the [Visual Studio Mar
 # Privacy
 Privacy is very prominent for us. You can read our privacy statements [here](PRIVACY.md).
 
-# Limitations
+<!-- # Limitations
 To accommodate fair use and availability for all users, the extension has currently the following limitations:
-<!-- - **Rate limit**: 5 requests per hour and 100 requests per day. -->
-- **File size**: Python source files of up to 1K LoC can be processed.
+- **Rate limit**: 5 requests per hour and 100 requests per day.
+- **File size**: Python source files of up to 1K LoC can be processed. -->
 
 <!-- # Known Issues -->
 

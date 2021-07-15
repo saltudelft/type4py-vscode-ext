@@ -92,8 +92,9 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
 
     if (!activeDocument) {
         vscode.window.showErrorMessage(ERROR_MESSAGES.noActiveFile);
-    } else if (activeDocument.lineCount > 1000) {
-        vscode.window.showErrorMessage(ERROR_MESSAGES.lineCountExceeded);
+    // Remove the file size limit for now!
+    // } else if (activeDocument.lineCount > 1000) {
+    //     vscode.window.showErrorMessage(ERROR_MESSAGES.lineCountExceeded);
     } else if (activeDocument.languageId !== "python") {
         vscode.window.showErrorMessage(ERROR_MESSAGES.nonPythonFile);
     } else if (activeDocument.getText().length === 0) {

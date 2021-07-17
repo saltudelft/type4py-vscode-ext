@@ -1,7 +1,7 @@
 {
 	"name": "type4py",
 	"displayName": "Type4Py",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Machine learning-based type autocompletion for Python",
 	"icon": "images/icon.ico",
 	"publisher": "saltud",

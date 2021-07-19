@@ -5,7 +5,8 @@ import { paramHintTrigger, returnHintTrigger, TypeSlots } from "./pythonData";
 import { Type4PySettings } from './settings';
 import typestore from './typestore';
 import axios from 'axios';
-import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, TELEMETRY_REQ_TIMEOUT, TELEMETRY_URL_BASE } from './constants';
+import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, INFER_URL_BASE_DEV, TELEMETRY_REQ_TIMEOUT,
+         TELEMETRY_URL_BASE, TELEMETRY_URL_BASE_DEV } from './constants';
 import * as fs from 'fs';
 import { ERROR_MESSAGES } from './messages';
 import * as path from 'path';
@@ -53,7 +54,13 @@ export function activate(context: vscode.ExtensionContext) {
        console.log(`Selected ${acceptedType} for ${typeSlot} with ${rank}`);
        if (settings.shareAcceptedPredsEnabled) {
             const f = vscode.window.activeTextEditor?.document.fileName!;
-            const telemResult = axios.get(TELEMETRY_URL_BASE,
+            var telemetry_url;
+            if (settings.devMode) {
+                telemetry_url = TELEMETRY_URL_BASE_DEV;
+            } else {
+                telemetry_url = TELEMETRY_URL_BASE;
+            }
+            const telemResult = axios.get(telemetry_url,
                 {timeout: TELEMETRY_REQ_TIMEOUT , params: {
                     at: acceptedType,
                     r: rank,
@@ -116,11 +123,18 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             // Read file contents
             const currentPath = activeDocument.fileName;
             const fileContents = fs.readFileSync(currentPath);
+            var infer_url;
 
             // Send request
             //console.log(`Sending request with TC: ${settings.tcEnabled}`);
-            console.log(`Sending request with FP: ${settings.fliterPredsEnabled}`)
-            const inferResult = await axios.post<InferApiPayload>(INFER_URL_BASE, fileContents,
+            //console.log(`Sending request with FP: ${settings.fliterPredsEnabled}`)
+            if (settings.devMode) {
+                infer_url = INFER_URL_BASE_DEV;
+            } else {
+                infer_url = INFER_URL_BASE;
+            }
+
+            const inferResult = await axios.post<InferApiPayload>(infer_url, fileContents,
                 { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT, params: {
                     // TODO: check with server side; this can be passed as boolean
                     //tc: settings.tcEnabled ? 0 : 0,

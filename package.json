@@ -67,6 +67,11 @@
 					"type": "boolean",
 					"default": false,
 					"description": "If enabled, accepted type predictions will be shared with us for research purposes and improving our Type4Py model. Note that the value of VSCode Telemetry overrides this setting. Read our privacy statement [here]()."
+				},
+				"workspace.devModeEnabled": {
+					"type": "boolean",
+					"default": false,
+					"description": "[ONLY FOR THE EXTENSION's DEVELOPERS] If enabled, the local server is queried for development and testing."
 				}
 			}
 		}

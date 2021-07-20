@@ -3,7 +3,9 @@ All notable changes to the [Type4Py's VSCode extension](https://github.com/saltu
 
 ## [Unreleased]
 ### Added
-- A `devMode` setting for testing and development using the local server (ONLY FOR THE EXTENSION'S DEVELOPERS).
+- A `devMode` setting for testing and development using the local server (**ONLY FOR THE EXTENSION'S DEVELOPERS**).
+- Submitting the canceled/rejected type predictions based on the user's consent.
+- Sending the hash of files' absolute path and the extension's version along with the prediction request (**ONLY FOR RESEARCH PURPOSE**).
 
 ## [0.1.3] - 2021-07-17
 ### Added

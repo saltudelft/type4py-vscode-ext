@@ -52,8 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
     const comm = vscode.commands.registerCommand('submitAcceptedType', (typeCompletionItem: TypeCompletionItem) => {
        console.log(`Selected ${typeCompletionItem.label} for ${typeCompletionItem.typeSlot} with ${typeCompletionItem.rank}`);
        if (settings.shareAcceptedPredsEnabled) {
-            const f = vscode.window.activeTextEditor?.document.fileName!;
-                                            
+            const f = vscode.window.activeTextEditor?.document.fileName!;                       
             var telemetry_url;
             if (settings.devMode) {
                 telemetry_url = TELEMETRY_URL_BASE_DEV;
@@ -164,7 +163,8 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                     //tc: settings.tcEnabled ? 0 : 0,
                     tc: 0,
                     fp: settings.fliterPredsEnabled ? 1 : 0,
-                    fh: createHash('sha256').update(currentPath, 'utf8').digest('hex')
+                    fh: createHash('sha256').update(currentPath, 'utf8').digest('hex'),
+                    ev: vscode.extensions.getExtension('saltud.type4py')?.packageJSON.version
                 }}
             );
             console.log(inferResult);

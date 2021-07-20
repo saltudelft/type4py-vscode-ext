@@ -10,7 +10,6 @@ import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, INFER_URL_BASE_DEV, TELEMETRY_RE
 import * as fs from 'fs';
 import { ERROR_MESSAGES } from './messages';
 import * as path from 'path';
-import { commands } from 'vscode';
 
 
 // Called when the extension is activated.
@@ -53,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
     const comm = vscode.commands.registerCommand('submitAcceptedType', (typeCompletionItem: TypeCompletionItem) => {
        console.log(`Selected ${typeCompletionItem.label} for ${typeCompletionItem.typeSlot} with ${typeCompletionItem.rank}`);
        if (settings.shareAcceptedPredsEnabled) {
-            const f = vscode.window.activeTextEditor?.document.fileName!;
+            const f_hash = vscode.window.activeTextEditor?.document.fileName!;
             var telemetry_url;
             if (settings.devMode) {
                 telemetry_url = TELEMETRY_URL_BASE_DEV;
@@ -71,7 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
                     fp: settings.fliterPredsEnabled ? 1 : 0,
                     idn: typeCompletionItem.identifierName,
                     tsl: typeCompletionItem.typeSlotLineNo,
-                    sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base) 
+                    sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f_hash)).base) 
                 }
                 context.workspaceState.update("lastTypePrediction", null);
             } else {
@@ -81,7 +80,7 @@ export function activate(context: vscode.ExtensionContext) {
                     fp: settings.fliterPredsEnabled ? 1 : 0,
                     idn: typeCompletionItem.identifierName,
                     tsl: typeCompletionItem.typeSlotLineNo,
-                    sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base) 
+                    sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f_hash)).base) 
                     }
             }
             const telemResult = axios.get(telemetry_url,
@@ -180,7 +179,7 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 // Submitting the last cancelled prediciton based on the user's consent 
                 // before giving new predictions.
                 if (context.workspaceState.get("lastTypePrediction") !== null) {
-                    commands.executeCommand("submitAcceptedType",
+                    vscode.commands.executeCommand("submitAcceptedType",
                                     context!.workspaceState.get("lastTypePrediction"));
                 }
 

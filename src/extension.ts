@@ -10,6 +10,7 @@ import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, INFER_URL_BASE_DEV, TELEMETRY_RE
 import * as fs from 'fs';
 import { ERROR_MESSAGES } from './messages';
 import * as path from 'path';
+import { commands } from 'vscode';
 
 
 // Called when the extension is activated.
@@ -34,8 +35,6 @@ export function activate(context: vscode.ExtensionContext) {
             paramHintTrigger
         ),
     );
-
-    
 
     // Register command for inferring type hints
     const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => { infer(settings, context) });
@@ -169,6 +168,14 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                     vscode.window.showErrorMessage(ERROR_MESSAGES.emptyPayload);
                 }
             } else {
+                
+                // Submitting the last cancelled prediciton based on the user's consent 
+                // before giving new predictions.
+                if (context.workspaceState.get("lastTypePrediction") !== null) {
+                    commands.executeCommand("submitAcceptedType",
+                                    context!.workspaceState.get("lastTypePrediction"));
+                }
+
                 // Transform & cache API data
                 const inferResultData: InferApiData = inferResult.data.response;
                 const transformedInferResultData = transformInferApiData(inferResultData);
@@ -187,7 +194,6 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             }
         } catch (error) {
             console.error(error);
-
             if (error.message) {
                 vscode.window.showErrorMessage(error.message);
             }                

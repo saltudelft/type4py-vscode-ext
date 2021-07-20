@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ParamHintCompletionProvider, ReturnHintCompletionProvider, VariableCompletionProvider } from './completionProvider';
+import { ParamHintCompletionProvider, ReturnHintCompletionProvider, TypeCompletionItem, VariableCompletionProvider } from './completionProvider';
 import { InferApiData, InferApiPayload, transformInferApiData } from "./type4pyData";
 import { paramHintTrigger, returnHintTrigger, TypeSlots } from "./pythonData";
 import { Type4PySettings } from './settings';
@@ -10,6 +10,7 @@ import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, INFER_URL_BASE_DEV, TELEMETRY_RE
 import * as fs from 'fs';
 import { ERROR_MESSAGES } from './messages';
 import * as path from 'path';
+import { commands } from 'vscode';
 
 
 // Called when the extension is activated.
@@ -20,17 +21,17 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.languages.registerCompletionItemProvider(
             'python',
-            new ParamHintCompletionProvider(),
+            new ParamHintCompletionProvider(context),
             paramHintTrigger
         ),
         vscode.languages.registerCompletionItemProvider(
             'python',
-            new ReturnHintCompletionProvider(),
+            new ReturnHintCompletionProvider(context),
             returnHintTrigger
         ),
         vscode.languages.registerCompletionItemProvider(
             'python',
-            new VariableCompletionProvider(),
+            new VariableCompletionProvider(context),
             paramHintTrigger
         ),
     );
@@ -49,9 +50,8 @@ export function activate(context: vscode.ExtensionContext) {
          });
     
     // Sharing accepted type predictions based on the user's consent
-    const comm = vscode.commands.registerCommand('submitAcceptedType', (acceptedType: string, rank: number,
-        typeSlot: TypeSlots, identifierName: string, typeSlotLineNo: number) => {
-       console.log(`Selected ${acceptedType} for ${typeSlot} with ${rank}`);
+    const comm = vscode.commands.registerCommand('submitAcceptedType', (typeCompletionItem: TypeCompletionItem) => {
+       console.log(`Selected ${typeCompletionItem.label} for ${typeCompletionItem.typeSlot} with ${typeCompletionItem.rank}`);
        if (settings.shareAcceptedPredsEnabled) {
             const f = vscode.window.activeTextEditor?.document.fileName!;
             var telemetry_url;
@@ -60,16 +60,32 @@ export function activate(context: vscode.ExtensionContext) {
             } else {
                 telemetry_url = TELEMETRY_URL_BASE;
             }
-            const telemResult = axios.get(telemetry_url,
-                {timeout: TELEMETRY_REQ_TIMEOUT , params: {
-                    at: acceptedType,
-                    r: rank,
-                    ts: typeSlot,
+
+            var req_params;
+            if (typeCompletionItem.label !== "" && typeCompletionItem.rank !== -1) {
+                req_params = {
+                    at: typeCompletionItem.label,
+                    r: typeCompletionItem.rank,
+                    ts: typeCompletionItem.typeSlot,
+                    cp: 0,
                     fp: settings.fliterPredsEnabled ? 1 : 0,
-                    idn: identifierName,
-                    tsl: typeSlotLineNo,
+                    idn: typeCompletionItem.identifierName,
+                    tsl: typeCompletionItem.typeSlotLineNo,
                     sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base) 
-                    }}
+                }
+                context.workspaceState.update("lastTypePrediction", null);
+            } else {
+                req_params = {
+                    ts: typeCompletionItem.typeSlot,
+                    cp: 1,
+                    fp: settings.fliterPredsEnabled ? 1 : 0,
+                    idn: typeCompletionItem.identifierName,
+                    tsl: typeCompletionItem.typeSlotLineNo,
+                    sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base) 
+                    }
+            }
+            const telemResult = axios.get(telemetry_url,
+                {timeout: TELEMETRY_REQ_TIMEOUT , params: req_params}
                 );
        }
        
@@ -152,6 +168,14 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                     vscode.window.showErrorMessage(ERROR_MESSAGES.emptyPayload);
                 }
             } else {
+                
+                // Submitting the last cancelled prediciton based on the user's consent 
+                // before giving new predictions.
+                if (context.workspaceState.get("lastTypePrediction") !== null) {
+                    commands.executeCommand("submitAcceptedType",
+                                    context!.workspaceState.get("lastTypePrediction"));
+                }
+
                 // Transform & cache API data
                 const inferResultData: InferApiData = inferResult.data.response;
                 const transformedInferResultData = transformInferApiData(inferResultData);
@@ -165,11 +189,11 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 context.workspaceState.update(relativePath,
                                               inferResult.data.response['session_id'])
                 context.workspaceState.update(activeDocument.fileName, true);
+                context.workspaceState.update("lastTypePrediction", null);
 
             }
         } catch (error) {
             console.error(error);
-
             if (error.message) {
                 vscode.window.showErrorMessage(error.message);
             }                

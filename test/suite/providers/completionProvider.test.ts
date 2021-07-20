@@ -5,7 +5,7 @@ import { CompletionProvider, ParamHintCompletionProvider } from "../../../src/co
 import { messageFor } from '../../common';
 
 suite('ParamHintCompletionProvider', () => {
-    const provider = new ParamHintCompletionProvider();
+    const provider = new ParamHintCompletionProvider(null);
 
     test("provides items for first param", async () => {
         let param = "param_1:";

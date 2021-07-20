@@ -10,7 +10,9 @@ import {
     TextDocument,
     Range,
     window,
-    Command
+    Command,
+    ExtensionContext,
+    commands
 } from "vscode";
 import { FunctionInferData, VariableInferData  } from "./type4pyData";
 import { paramHintTrigger, returnHintTrigger } from './pythonData';
@@ -21,8 +23,26 @@ import { TypeSlots } from "./pythonData";
 
 export abstract class CompletionProvider {
 
+    protected vscContext: ExtensionContext | null;
+    // Prevents several submission of the same prediction.
+    protected resolvedCompletion: boolean = false;
+
+    constructor(context: ExtensionContext | null=null) {
+        this.vscContext = context;
+    }
+
     protected labelFor(typeHint: string): string {
         return " " + typeHint;
+    }
+
+    protected submitCanceledPrediction(currTypeSelection: TypeCompletionItem) {
+        if (this.vscContext!.workspaceState.get("lastTypePrediction") === null) {
+            this.vscContext!.workspaceState.update("lastTypePrediction", currTypeSelection);
+        } else {
+            commands.executeCommand("submitAcceptedType",
+                                    this.vscContext!.workspaceState.get("lastTypePrediction"));
+            this.vscContext!.workspaceState.update("lastTypePrediction", currTypeSelection);
+        }
     }
 
     abstract provideCompletionItems(
@@ -33,14 +53,30 @@ export abstract class CompletionProvider {
     ): Promise<CompletionList | null>;
 }
 
+export class TypeCompletionItem extends CompletionItem {
+
+    public typeSlot: TypeSlots;
+    public rank: number;
+    public identifierName: string; // Can be name of a variable, a parameter, or a function.
+    public typeSlotLineNo: number;
+
+    constructor(label: string, kind: CompletionItemKind, typeSlot: TypeSlots,
+                rank: number, identifierName: string, typeSlotLineNo: number) {
+        super(label, kind);
+        this.typeSlot = typeSlot;
+        this.rank = rank;
+        this.identifierName = identifierName;
+        this.typeSlotLineNo = typeSlotLineNo;
+    }
+}
+
 /**
  * Provides one or more parameter type hint {@link CompletionItem}.
  */
 export class ParamHintCompletionProvider extends CompletionProvider implements CompletionItemProvider {
 
-    constructor() {
-        super();
-    }
+    private paramName: string = "";
+    private paramLineNo: number = -1;
 
     public async provideCompletionItems(
         doc: TextDocument, 
@@ -53,7 +89,7 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
             return null;
         }
 
-        const items: CompletionItem[] = [];
+        const items: TypeCompletionItem[] = [];
         const line = doc.lineAt(pos);
         const precedingText = line.text.substring(0, pos.character - 1).trim();
 
@@ -63,11 +99,18 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
             const param = this.getParam(precedingText);
             if (param && !token.isCancellationRequested) {
                 const inferData = findFunctionInferenceDataForActiveFilePos(pos);
-
+                this.resolvedCompletion = false;
+                
+                if (inferData !== undefined) {
+                    this.paramName = param;
+                    this.paramLineNo = line.lineNumber + 1;
+                }
+                
                 // Map parameter data to completion items (if present)
                 inferData?.params[param].forEach((annotation, id) => {
-                    items.push(annotationToCompletionItem(annotation, id, TypeSlots.Parameter, param,
-                                                          line.lineNumber + 1));
+                    items.push(annotationToCompletionItem(new TypeCompletionItem(annotation,
+                         CompletionItemKind.TypeParameter, TypeSlots.Parameter, id, param,
+                                                          line.lineNumber + 1)));
                 });
             }
         }
@@ -102,12 +145,25 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
         }
         return false;
     }
+
+    public async resolveCompletionItem(item: CompletionItem, token: CancellationToken) {
+        var currTypeSelection = new TypeCompletionItem("", CompletionItemKind.TypeParameter, TypeSlots.Parameter,
+                                                       -1, this.paramName, this.paramLineNo);
+        if (this.resolvedCompletion === false) {
+            this.submitCanceledPrediction(currTypeSelection);
+            this.resolvedCompletion = true;
+        }
+        return null;
+    }
 }
 
 /**
  * Provides one or more return type hint {@link CompletionItem}.
  */
 export class ReturnHintCompletionProvider extends CompletionProvider implements CompletionItemProvider {
+
+    private functionName: string = "";
+    private functionLineNo: number = -1;
 
     public async provideCompletionItems(
         doc: TextDocument, 
@@ -124,11 +180,18 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
 
         if (this.shouldProvideItems(line, pos)) {
             const inferData = findFunctionInferenceDataForActiveFilePos(pos);
+            this.resolvedCompletion = false;
+
+            if (inferData !== undefined) {
+                this.functionName = inferData!.name;
+                this.functionLineNo = line.lineNumber + 1;
+            }
             
             // Map return type data to completion items (if present)
             inferData?.returnTypes.forEach((annotation, id) => {
-                items.push(annotationToCompletionItem(annotation, id, TypeSlots.ReturnType, inferData.name,
-                                                      line.lineNumber + 1));
+                items.push(annotationToCompletionItem(new TypeCompletionItem(annotation,
+                     CompletionItemKind.TypeParameter, TypeSlots.ReturnType, id, this.functionName,
+                                                      this.functionLineNo)));
             });
         }
         return Promise.resolve(new CompletionList(items, false));
@@ -141,12 +204,25 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
         }
         return false;
     }
+
+    public async resolveCompletionItem(item: CompletionItem, token: CancellationToken) {
+        var currTypeSelection = new TypeCompletionItem("", CompletionItemKind.TypeParameter, TypeSlots.ReturnType,
+                                                       -1, this.functionName, this.functionLineNo);
+        if (this.resolvedCompletion === false) {
+            this.submitCanceledPrediction(currTypeSelection);
+            this.resolvedCompletion = true;
+        }
+        return null;
+    }
 }
 
 /**
  * Provides one or more variable type hint {@link CompletionItem}.
  */
  export class VariableCompletionProvider extends CompletionProvider implements CompletionItemProvider {
+
+    private variableName: string = "";
+    private variableLineNo: number = -1;
 
     public async provideCompletionItems(
         doc: TextDocument, 
@@ -159,16 +235,21 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
             return null;
         }
 
-        const items: CompletionItem[] = [];
+        const items: TypeCompletionItem[] = [];
         const line = doc.lineAt(pos);
 
         if (this.shouldProvideItems(line, pos)) {
             const inferData = findVariableInferenceDataForActiveFilePos(line);
-            
+            this.resolvedCompletion = false;
+
+            if (inferData !== undefined) {
+                this.variableName = inferData!.name;
+                this.variableLineNo = line.lineNumber + 1;
+            }
             // Map variable data to completion items (if present)
             inferData?.annotations.forEach((annotation, id) => {
-                items.push(annotationToCompletionItem(annotation, id, TypeSlots.Variable, inferData.name,
-                                                      line.lineNumber + 1));
+                items.push(annotationToCompletionItem(new TypeCompletionItem(annotation, CompletionItemKind.TypeParameter,
+                                                      TypeSlots.Variable, id, this.variableName, this.variableLineNo)));
             });
         }
         return Promise.resolve(new CompletionList(items, false));
@@ -180,6 +261,17 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
 
         // Test for '<space>:<space>=' pattern
         return pos.character > 0 && /(\s)*:(\s)*=/.test(lineRemainder);
+    }
+
+    public async resolveCompletionItem(item: CompletionItem, token: CancellationToken) {
+        console.log("Resolved Completion items!");
+        var currTypeSelection = new TypeCompletionItem("", CompletionItemKind.TypeParameter, TypeSlots.Variable,
+                                                       -1, this.variableName, this.variableLineNo);
+        if (this.resolvedCompletion === false) {
+            this.submitCanceledPrediction(currTypeSelection);
+            this.resolvedCompletion = true;
+        }
+        return null;
     }
 }
 
@@ -257,26 +349,21 @@ function findVariableInferenceDataForActiveFilePos(line: TextLine): VariableInfe
 
 export class AcceptedTypeCompletionItem implements Command {
 
-    rank: number;
-    selectedType: string;
-    typeSlot: TypeSlots;
-    identifierName: string; // Can be name of a variable, a parameter, or a function.
-    typeSlotLineNo: number;
+    // rank: number;
+    // selectedType: string;
+    // typeSlot: TypeSlots;
+    // identifierName: string; // Can be name of a variable, a parameter, or a function.
+    // typeSlotLineNo: number;
+    typeCompletionItem: TypeCompletionItem;
 
     title = "AcceptedTypeCompletionItem";
     command = 'submitAcceptedType';
     arguments: any[];
 
-    constructor(selectedType: string, rank: number, typeSlot: TypeSlots,
-                identifierName: string, typeSlotLineNo: number) {
-        this.rank = rank;
-        this.selectedType = selectedType;
-        this.typeSlot = typeSlot;
-        this.identifierName = identifierName;
-        this.typeSlotLineNo = typeSlotLineNo;
-        this.arguments = [this.selectedType, this.rank + 1, this.typeSlot, this.identifierName,
-                          this.typeSlotLineNo];
-
+    constructor(typeCompletion: TypeCompletionItem) {
+        this.typeCompletionItem = typeCompletion;
+        this.typeCompletionItem.rank += 1;
+        this.arguments = [this.typeCompletionItem];
     }
 }
 
@@ -288,12 +375,11 @@ export class AcceptedTypeCompletionItem implements Command {
  * @param id Index
  * @returns CompletionItem
  */
-function annotationToCompletionItem(annotation: string, id: number, typeSlot: TypeSlots,
-                                    identifierName: string, typeSlotLineNo: number): CompletionItem {
-    const item = new CompletionItem(annotation, CompletionItemKind.TypeParameter);
-    item.command = new AcceptedTypeCompletionItem(annotation, id, typeSlot, identifierName, typeSlotLineNo);
+function annotationToCompletionItem(item: TypeCompletionItem): TypeCompletionItem {
+
+    item.command = new AcceptedTypeCompletionItem(item);
     item.filterText = ` ${item.label}`; // Do not remove filter after adding single whitespace
     item.insertText = ` ${item.label}`; // Add whitespace after annotation
-    item.sortText = `${id}`;
+    item.sortText = `${item.rank}`;
     return item;
 }

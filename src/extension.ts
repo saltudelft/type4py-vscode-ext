@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { ParamHintCompletionProvider, ReturnHintCompletionProvider, TypeCompletionItem, VariableCompletionProvider } from './completionProvider';
 import { InferApiData, InferApiPayload, transformInferApiData } from "./type4pyData";
-import { paramHintTrigger, returnHintTrigger, TypeSlots } from "./pythonData";
+import { paramHintTrigger, returnHintTrigger} from "./pythonData";
 import { Type4PySettings } from './settings';
 import typestore from './typestore';
 import axios from 'axios';
@@ -104,6 +104,14 @@ export function activate(context: vscode.ExtensionContext) {
             }}
         )
     }
+
+    // Clear all the stored objects on workspaceState for development
+    if (settings.devMode) {
+        for (let k of context.workspaceState.keys()) {
+            console.log(context.workspaceState.get(k));
+            context.workspaceState.update(k, undefined);
+        }
+    }
 }
 
 // Called when the extension is deactivated.
@@ -118,7 +126,7 @@ export function deactivate() {
  */
 async function infer(settings: Type4PySettings, context: vscode.ExtensionContext,
                      auto: boolean=false): Promise<void> {
-    
+ 
     // Get current file being editted
     const activeDocument = vscode.window.activeTextEditor?.document;
 
@@ -133,13 +141,13 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
         if (auto === false){ vscode.window.showErrorMessage(ERROR_MESSAGES.emptyFile); }
     } else {
         try {
-            const relativePath = path.parse(vscode.workspace.asRelativePath(activeDocument.fileName)).base;
-            vscode.window.showInformationMessage(`Inferring type annotations for the file ${relativePath}`);
-
             // Read file contents
             const currentPath = activeDocument.fileName;
             const fileContents = fs.readFileSync(currentPath);
             var infer_url;
+
+            const relativePath = path.parse(vscode.workspace.asRelativePath(currentPath)).base;
+            vscode.window.showInformationMessage(`Inferring type annotations for the file ${relativePath}`);
 
             // Send request
             //console.log(`Sending request with TC: ${settings.tcEnabled}`);
@@ -185,10 +193,13 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 vscode.window.showInformationMessage(
                     `Type prediction for ${relativePath} completed!`
                 );
-
+                
+                // Session ID of the current opened file assigned by the server.
                 context.workspaceState.update(relativePath,
                                               inferResult.data.response['session_id'])
-                context.workspaceState.update(activeDocument.fileName, true);
+                // Remembers the last opened file for the auto-infer feature.
+                context.workspaceState.update(currentPath, true);
+                // Rememebers the last canceled type predictions for submission (based on the user's consent)
                 context.workspaceState.update("lastTypePrediction", null);
 
             }

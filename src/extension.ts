@@ -60,16 +60,31 @@ export function activate(context: vscode.ExtensionContext) {
             } else {
                 telemetry_url = TELEMETRY_URL_BASE;
             }
-            const telemResult = axios.get(telemetry_url,
-                {timeout: TELEMETRY_REQ_TIMEOUT , params: {
+
+            var req_params;
+            if (acceptedType !== null && rank !== null) {
+                req_params = {
                     at: acceptedType,
                     r: rank,
                     ts: typeSlot,
+                    cp: 0,
                     fp: settings.fliterPredsEnabled ? 1 : 0,
                     idn: identifierName,
                     tsl: typeSlotLineNo,
                     sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base) 
-                    }}
+                }
+            } else {
+                req_params = {
+                    ts: typeSlot,
+                    cp: 1,
+                    fp: settings.fliterPredsEnabled ? 1 : 0,
+                    idn: identifierName,
+                    tsl: typeSlotLineNo,
+                    sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base) 
+                    }
+            }
+            const telemResult = axios.get(telemetry_url,
+                {timeout: TELEMETRY_REQ_TIMEOUT , params: req_params}
                 );
        }
        

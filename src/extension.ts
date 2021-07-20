@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ParamHintCompletionProvider, ReturnHintCompletionProvider, VariableCompletionProvider } from './completionProvider';
+import { ParamHintCompletionProvider, ReturnHintCompletionProvider, TypeCompletionItem, VariableCompletionProvider } from './completionProvider';
 import { InferApiData, InferApiPayload, transformInferApiData } from "./type4pyData";
 import { paramHintTrigger, returnHintTrigger, TypeSlots } from "./pythonData";
 import { Type4PySettings } from './settings';
@@ -20,20 +20,22 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         vscode.languages.registerCompletionItemProvider(
             'python',
-            new ParamHintCompletionProvider(),
+            new ParamHintCompletionProvider(context),
             paramHintTrigger
         ),
         vscode.languages.registerCompletionItemProvider(
             'python',
-            new ReturnHintCompletionProvider(),
+            new ReturnHintCompletionProvider(context),
             returnHintTrigger
         ),
         vscode.languages.registerCompletionItemProvider(
             'python',
-            new VariableCompletionProvider(),
+            new VariableCompletionProvider(context),
             paramHintTrigger
         ),
     );
+
+    
 
     // Register command for inferring type hints
     const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => { infer(settings, context) });
@@ -49,9 +51,8 @@ export function activate(context: vscode.ExtensionContext) {
          });
     
     // Sharing accepted type predictions based on the user's consent
-    const comm = vscode.commands.registerCommand('submitAcceptedType', (acceptedType: string, rank: number,
-        typeSlot: TypeSlots, identifierName: string, typeSlotLineNo: number) => {
-       console.log(`Selected ${acceptedType} for ${typeSlot} with ${rank}`);
+    const comm = vscode.commands.registerCommand('submitAcceptedType', (typeCompletionItem: TypeCompletionItem) => {
+       console.log(`Selected ${typeCompletionItem.label} for ${typeCompletionItem.typeSlot} with ${typeCompletionItem.rank}`);
        if (settings.shareAcceptedPredsEnabled) {
             const f = vscode.window.activeTextEditor?.document.fileName!;
             var telemetry_url;
@@ -62,24 +63,25 @@ export function activate(context: vscode.ExtensionContext) {
             }
 
             var req_params;
-            if (acceptedType !== null && rank !== null) {
+            if (typeCompletionItem.label !== "" && typeCompletionItem.rank !== -1) {
                 req_params = {
-                    at: acceptedType,
-                    r: rank,
-                    ts: typeSlot,
+                    at: typeCompletionItem.label,
+                    r: typeCompletionItem.rank,
+                    ts: typeCompletionItem.typeSlot,
                     cp: 0,
                     fp: settings.fliterPredsEnabled ? 1 : 0,
-                    idn: identifierName,
-                    tsl: typeSlotLineNo,
+                    idn: typeCompletionItem.identifierName,
+                    tsl: typeCompletionItem.typeSlotLineNo,
                     sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base) 
                 }
+                context.workspaceState.update("lastTypePrediction", null);
             } else {
                 req_params = {
-                    ts: typeSlot,
+                    ts: typeCompletionItem.typeSlot,
                     cp: 1,
                     fp: settings.fliterPredsEnabled ? 1 : 0,
-                    idn: identifierName,
-                    tsl: typeSlotLineNo,
+                    idn: typeCompletionItem.identifierName,
+                    tsl: typeCompletionItem.typeSlotLineNo,
                     sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base) 
                     }
             }
@@ -180,6 +182,7 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 context.workspaceState.update(relativePath,
                                               inferResult.data.response['session_id'])
                 context.workspaceState.update(activeDocument.fileName, true);
+                context.workspaceState.update("lastTypePrediction", null);
 
             }
         } catch (error) {

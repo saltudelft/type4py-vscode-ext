@@ -6,7 +6,7 @@ import { Type4PySettings } from './settings';
 import typestore from './typestore';
 import axios from 'axios';
 import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, INFER_URL_BASE_DEV, TELEMETRY_REQ_TIMEOUT,
-         TELEMETRY_URL_BASE, TELEMETRY_URL_BASE_DEV } from './constants';
+         TELEMETRY_URL_BASE, TELEMETRY_URL_BASE_DEV} from './constants';
 import * as fs from 'fs';
 import { ERROR_MESSAGES } from './messages';
 import * as path from 'path';
@@ -54,10 +54,11 @@ export function activate(context: vscode.ExtensionContext) {
        if (settings.shareAcceptedPredsEnabled) {
             const f = vscode.window.activeTextEditor?.document.fileName!;                       
             var telemetry_url;
-            if (settings.devMode) {
-                telemetry_url = TELEMETRY_URL_BASE_DEV;
-            } else {
+
+            if (context.extensionMode === vscode.ExtensionMode.Production) {
                 telemetry_url = TELEMETRY_URL_BASE;
+            } else {
+                telemetry_url = TELEMETRY_URL_BASE_DEV;
             }
 
             var req_params;
@@ -108,9 +109,8 @@ export function activate(context: vscode.ExtensionContext) {
     context.globalState.update("activation_id", randomBytes(16).toString('hex'));
 
     // Clear all the stored objects on workspaceState for development
-    if (settings.devMode) {
+    if (!(context.extensionMode === vscode.ExtensionMode.Production)) {
         for (let k of context.workspaceState.keys()) {
-            console.log(context.workspaceState.get(k));
             context.workspaceState.update(k, undefined);
         }
     }
@@ -154,10 +154,10 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             // Send request
             //console.log(`Sending request with TC: ${settings.tcEnabled}`);
             //console.log(`Sending request with FP: ${settings.fliterPredsEnabled}`)
-            if (settings.devMode) {
-                infer_url = INFER_URL_BASE_DEV;
-            } else {
+            if (context.extensionMode === vscode.ExtensionMode.Production) {
                 infer_url = INFER_URL_BASE;
+            } else {
+                infer_url = INFER_URL_BASE_DEV; // Development and testing
             }
 
             const inferResult = await axios.post<InferApiPayload>(infer_url, fileContents,

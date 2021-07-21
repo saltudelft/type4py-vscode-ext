@@ -91,23 +91,27 @@ export function activate(context: vscode.ExtensionContext) {
        
    });
 
-   if (vscode.env.isTelemetryEnabled) {
-    settings.setShareAcceptedPreds = vscode.env.isTelemetryEnabled;
-    } else {
-        // Sharing accepted type predctions based on the user's consent
-        vscode.window.showInformationMessage("Would you like to share accepted type predictions with us for research purposes?",
-        ...["Yes", "No"]).then((answer) => {
-            if (answer === "Yes") {
-                settings.setShareAcceptedPreds = true;
+   if (context.globalState.get("activation_id") == undefined) {
+        if (vscode.env.isTelemetryEnabled) {
+            settings.setShareAcceptedPreds = vscode.env.isTelemetryEnabled;
             } else {
-                settings.setShareAcceptedPreds = false;
-            }}
-        )
+                // Sharing accepted type predctions based on the user's consent
+                vscode.window.showInformationMessage("Would you like to share accepted type predictions with us for research purposes?",
+                ...["Yes", "No"]).then((answer) => {
+                    if (answer === "Yes") {
+                        settings.setShareAcceptedPreds = true;
+                    } else {
+                        settings.setShareAcceptedPreds = false;
+                    }}
+                )
+            }
+   }
+   
+    // Each installation of the extension gets a random activation ID once!
+    if (context.globalState.get("activation_id") == undefined) {
+        context.globalState.update("activation_id", randomBytes(16).toString('hex'));
     }
-
-    // Each installation of the extension gets a random activation ID
-    context.globalState.update("activation_id", randomBytes(16).toString('hex'));
-
+    
     // Clear all the stored objects on workspaceState for development
     if (!(context.extensionMode === vscode.ExtensionMode.Production)) {
         for (let k of context.workspaceState.keys()) {

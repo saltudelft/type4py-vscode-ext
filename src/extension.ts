@@ -10,7 +10,7 @@ import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, INFER_URL_BASE_DEV, TELEMETRY_RE
 import * as fs from 'fs';
 import { ERROR_MESSAGES } from './messages';
 import * as path from 'path';
-import {createHash} from 'crypto';
+import {createHash, randomBytes} from 'crypto';
 
 // Called when the extension is activated.
 export function activate(context: vscode.ExtensionContext) {
@@ -104,6 +104,9 @@ export function activate(context: vscode.ExtensionContext) {
         )
     }
 
+    // Each installation of the extension gets a random activation ID
+    context.globalState.update("activation_id", randomBytes(16).toString('hex'));
+
     // Clear all the stored objects on workspaceState for development
     if (settings.devMode) {
         for (let k of context.workspaceState.keys()) {
@@ -163,6 +166,7 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                     //tc: settings.tcEnabled ? 0 : 0,
                     tc: 0,
                     fp: settings.fliterPredsEnabled ? 1 : 0,
+                    ai: context.globalState.get("activation_id"),
                     fh: createHash('sha256').update(currentPath, 'utf8').digest('hex'),
                     ev: vscode.extensions.getExtension('saltud.type4py')?.packageJSON.version
                 }}

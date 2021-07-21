@@ -40,7 +40,9 @@ export abstract class CompletionProvider {
             this.vscContext!.workspaceState.update("lastTypePrediction", currTypeSelection);
         } else {
             commands.executeCommand("submitAcceptedType",
-                                    this.vscContext!.workspaceState.get("lastTypePrediction"));
+                                    this.vscContext!.workspaceState.get("lastTypePrediction")).then(undefined, err => {
+                                        console.error("Couldn't submit the accepted/rejected type!");
+                                    });
             this.vscContext!.workspaceState.update("lastTypePrediction", currTypeSelection);
         }
     }

@@ -184,9 +184,11 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 
                 // Submitting the last cancelled prediciton based on the user's consent 
                 // before giving new predictions.
-                if (context.workspaceState.get("lastTypePrediction") !== null) {
+                if (context.workspaceState.get("lastTypePrediction") != null) {
                     vscode.commands.executeCommand("submitAcceptedType",
-                                    context!.workspaceState.get("lastTypePrediction"));
+                                    context!.workspaceState.get("lastTypePrediction")).then(undefined, err => {
+                                        console.error("Couldn't submit the accepted/rejected type!")
+                                    });
                 }
 
                 // Transform & cache API data

@@ -9,7 +9,6 @@ export class Type4PySettings {
     private _filterPreds = true;
     private _shareAcceptedPreds = false;
     private _autoInfer = false;
-    private _devMode = true;
 
     constructor() {
         workspace.onDidChangeConfiguration(() => {
@@ -34,10 +33,6 @@ export class Type4PySettings {
         return this._autoInfer;
     }
 
-    public get devMode() {
-        return this._devMode;
-    }
-
     public set setShareAcceptedPreds(value: boolean) {
         this._shareAcceptedPreds = value;
     }
@@ -53,7 +48,6 @@ export class Type4PySettings {
         const filterPreds: boolean | undefined = workspace.getConfiguration('workspace').get('filterPredictionsEnabled');
         const shareAcceptPreds: boolean | undefined = workspace.getConfiguration('workspace').get('shareAcceptedPredictions');
         const autoInfer: boolean | undefined = workspace.getConfiguration('workspace').get('autoInferEnabled');
-        const devMode : boolean | undefined = workspace.getConfiguration('workspace').get('devModeEnabled');
         
         // if (tcEnable !== undefined) {
         //     this._tcEnabled = tcEnable;
@@ -69,10 +63,6 @@ export class Type4PySettings {
 
         if (autoInfer !== undefined) {
             this._autoInfer = autoInfer;
-        }
-
-        if (devMode !== undefined) {
-            this._devMode = devMode;
         }
     }
 }

@@ -26,7 +26,7 @@
 		"typeannotations"
 	],
 	"engines": {
-		"vscode": "^1.50.0"
+		"vscode": "^1.58.0"
 	},
 	"activationEvents": [
 		"*"
@@ -53,7 +53,7 @@
 		"configuration": {
 			"title": "Type4Py",
 			"properties": {
-				"workspace.autoInferEnabled" : {
+				"workspace.autoInferEnabled": {
 					"type": "boolean",
 					"default": false,
 					"description": "If enabled, it automatically infers type annotations when opening a Python source file. Note that automatic inference works only once for a newly opened file."
@@ -67,11 +67,6 @@
 					"type": "boolean",
 					"default": false,
 					"description": "If enabled, accepted type predictions will be shared with us for research purposes and improving our Type4Py model. Note that the value of VSCode Telemetry overrides this setting. Read our privacy statement [here]()."
-				},
-				"workspace.devModeEnabled": {
-					"type": "boolean",
-					"default": false,
-					"description": "[ONLY FOR THE EXTENSION's DEVELOPERS] If enabled, the local server is queried for development and testing."
 				}
 			}
 		}
@@ -90,7 +85,7 @@
 		"@types/glob": "^7.1.3",
 		"@types/mocha": "^7.0.1",
 		"@types/node": "^12.12.54",
-		"@types/vscode": "^1.50.0",
+		"@types/vscode": "^1.58.0",
 		"@typescript-eslint/eslint-plugin": "^2.34.0",
 		"@typescript-eslint/parser": "^2.34.0",
 		"eslint": "^6.8.0",
@@ -98,7 +93,6 @@
 		"mocha": "^7.2.0",
 		"ts-loader": "^6.2.2",
 		"typescript": "^3.9.7",
-		"vscode": "^1.1.37",
 		"vscode-test": "^1.4.0",
 		"webpack": "^4.44.1",
 		"webpack-cli": "^3.3.12"

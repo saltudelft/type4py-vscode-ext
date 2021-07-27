@@ -75,6 +75,10 @@ External contributions are welcome such as bug fixes and improvements! Feel free
 4. Open a Python source code file, open the Command Palette, and run the *"Type4Py: Infer type annotations"* command. 
 5. After a success message pops up, fill function annotations as usual (e.g. `x:` or `def ...) ->`), and type completion items will show up (if available)
 
+## Running tests
+1. Make sure that all instances of VSCode are closed on the machine.
+2. Run `npm run test-compile`
+
 # Roadmap
 Here are the desirable features for future releases.
 - Implementing a caching solution to preserve type predictions when source files change.

@@ -41,6 +41,7 @@ export class Type4PyStatusBar {
         this.completedRequests= 0;
         this.statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
         this.statusBar.text = `Type4Py: $(loading) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
+        this.statusBar.tooltip = "Click to see the extension's logs";
         this.statusBar.show();
         context.subscriptions.push(this.statusBar);
 
@@ -66,7 +67,5 @@ export class Type4PyStatusBar {
         this.statusBar.text = `Type4Py: $(loading) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
         this.statusBar.show();
     }
-
-    
 
 }

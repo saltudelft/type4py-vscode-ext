@@ -27,7 +27,6 @@ class TypeStore {
      * @returns Value mapped by filepath
      */
     get(key: string): InferData | undefined {
-        const t = 5;
         return this.dataMap.get(key);
     }
 }

@@ -153,7 +153,7 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             var infer_url;
 
             const relativePath = path.parse(vscode.workspace.asRelativePath(currentPath)).base;
-            vscode.window.showInformationMessage(`Inferring type annotations for the file ${relativePath}`);
+            vscode.window.setStatusBarMessage(`Inferring type annotations for the file ${relativePath}`);
 
             // Send request
             //console.log(`Sending request with TC: ${settings.tcEnabled}`);
@@ -201,7 +201,7 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 console.log(transformedInferResultData);
                 typestore.add(currentPath, transformedInferResultData);
                 
-                vscode.window.showInformationMessage(
+                vscode.window.setStatusBarMessage(
                     `Type prediction for ${relativePath} completed!`
                 );
                 

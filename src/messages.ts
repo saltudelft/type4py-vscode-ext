@@ -4,5 +4,6 @@ export const ERROR_MESSAGES = {
     'noActiveFile': "No document is opened in the VSCode editor.",
     'nonPythonFile': "Cannot infer type annotations for non-Python code files.",
     'emptyFile': "Cannot infer type annotations for empty files.",
-    'emptyPayload': "The received response was empty."
+    'emptyPayload': "The received response was empty.",
+    'connectionError': "Could not connect to the server."
 }

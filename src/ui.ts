@@ -40,7 +40,7 @@ export class Type4PyStatusBar {
         this.inProgressRequests = 0;
         this.completedRequests= 0;
         this.statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-        this.statusBar.text = `Type4Py: $(settings-sync-view-icon) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
+        this.statusBar.text = `Type4Py: $(loading) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
         this.statusBar.show();
         context.subscriptions.push(this.statusBar);
 
@@ -50,20 +50,20 @@ export class Type4PyStatusBar {
 
     public updateInProgress() {
         this.inProgressRequests += 1;
-        this.statusBar.text = `Type4Py: $(settings-sync-view-icon) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
+        this.statusBar.text = `Type4Py: $(loading) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
         this.statusBar.show();
     }
 
     public updateCompleted() {
         this.inProgressRequests -= 1;
         this.completedRequests += 1;
-        this.statusBar.text = `Type4Py: $(settings-sync-view-icon) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
+        this.statusBar.text = `Type4Py: $(loading) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
         this.statusBar.show();
     }
 
     public updateInProgressWithErrors() {
         this.inProgressRequests -= 1;
-        this.statusBar.text = `Type4Py: $(settings-sync-view-icon) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
+        this.statusBar.text = `Type4Py: $(loading) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
         this.statusBar.show();
     }
 

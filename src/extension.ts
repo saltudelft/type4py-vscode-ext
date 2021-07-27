@@ -232,7 +232,8 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
         } catch (error) {
             console.error(error);
             if (error.message) {
-                vscode.window.showErrorMessage(error.message);
+                statusBar.updateInProgressWithErrors();
+                vscode.window.showErrorMessage(ERROR_MESSAGES.connectionError);
             }                
         }
     }

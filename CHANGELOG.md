@@ -2,6 +2,8 @@
 All notable changes to the [Type4Py's VSCode extension](https://github.com/saltudelft/type4py-vscode-ext) will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [0.1.4] - 2021-07-21
 ### Added
 - Detecting `ExtensionMode` for testing and development using the local server (**ONLY FOR THE EXTENSION'S DEVELOPERS**).
 - Submitting the canceled/rejected type predictions based on the user's consent.

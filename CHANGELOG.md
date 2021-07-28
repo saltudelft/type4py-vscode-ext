@@ -4,6 +4,7 @@ All notable changes to the [Type4Py's VSCode extension](https://github.com/saltu
 ## [Unreleased]
 ### Added
 - Include the name of the extension in the right side of predicted types.
+- A naive support for predicting types in the case of variables redeclaration in the scope of functions (Addresses #7).
 
 ## [0.1.4] - 2021-07-21
 ### Added

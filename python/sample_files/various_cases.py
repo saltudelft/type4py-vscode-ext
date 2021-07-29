@@ -7,8 +7,8 @@ class A():
     def add(self, y):
         return (self.p + y)
 
-def foo(x):
+def foo(x, y):
     a = 1
-    return x + a
+    return x + a + a*y
 
 v = 5

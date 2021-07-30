@@ -82,6 +82,7 @@ Here are the desirable features for future releases.
 - Implementing a caching solution to preserve type predictions when source files change.
 - Enabling the type-checking process for the Type4Py's predictions using [mypy](https://github.com/python/mypy), preferably at the client-side.
 - Fine-tuning the (pre-trained) Type4Py model on users' projects to learn project-specific types.
+- Releasing a local version of the Type4Py model and its pipeline that can be queried on users' machines.
 
 # Contributors
 - Amir M. Mir (@mir-am)

@@ -33,14 +33,14 @@ export class Type4PyOutputChannel {
 export class Type4PyStatusBar {
 
     private statusBar: vscode.StatusBarItem;
-    private inProgressRequests: number;
-    private completedRequests: number;
+    private inProgressRequests: number = 0;
+    private completedRequests: number = 0;
+    private statusBarText: string;
 
     constructor(context: vscode.ExtensionContext, outputChannel: Type4PyOutputChannel) {
-        this.inProgressRequests = 0;
-        this.completedRequests= 0;
+        this.statusBarText = this.getUpdatedStatusBar();
         this.statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-        this.statusBar.text = `Type4Py: $(loading) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
+        this.statusBar.text = this.statusBarText;
         this.statusBar.tooltip = "Click to see the extension's logs";
         this.statusBar.show();
         context.subscriptions.push(this.statusBar);
@@ -49,23 +49,27 @@ export class Type4PyStatusBar {
         this.statusBar.command = 'showOutputChannel';
     }
 
+    private getUpdatedStatusBar(): string {
+        this.statusBarText = `Type4Py: in-progress $(loading) ${this.inProgressRequests} | completed $(testing-passed-icon) ${this.completedRequests}`;
+        return this.statusBarText;
+    }
+
     public updateInProgress() {
         this.inProgressRequests += 1;
-        this.statusBar.text = `Type4Py: $(loading) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
+        this.statusBar.text = this.getUpdatedStatusBar();
         this.statusBar.show();
     }
 
     public updateCompleted() {
         this.inProgressRequests -= 1;
         this.completedRequests += 1;
-        this.statusBar.text = `Type4Py: $(loading) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
+        this.statusBar.text = this.getUpdatedStatusBar();
         this.statusBar.show();
     }
 
     public updateInProgressWithErrors() {
         this.inProgressRequests -= 1;
-        this.statusBar.text = `Type4Py: $(loading) ${this.inProgressRequests} $(testing-passed-icon) ${this.completedRequests}`;
+        this.statusBar.text = this.getUpdatedStatusBar()
         this.statusBar.show();
     }
-
 }

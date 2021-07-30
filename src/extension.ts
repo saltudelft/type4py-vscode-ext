@@ -163,6 +163,7 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             //vscode.window.setStatusBarMessage(`Inferring type annotations for the file ${relativePath}`);
             statusBar.updateInProgress();
             outputChannel.appendInProgress(relativePath);
+            outputChannel.show();
 
             // Send request
             //console.log(`Sending request with TC: ${settings.tcEnabled}`);

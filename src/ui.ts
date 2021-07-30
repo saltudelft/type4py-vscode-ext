@@ -50,7 +50,7 @@ export class Type4PyStatusBar {
     }
 
     private getUpdatedStatusBar(): string {
-        this.statusBarText = `Type4Py: in-progress $(loading) ${this.inProgressRequests} | completed $(testing-passed-icon) ${this.completedRequests}`;
+        this.statusBarText = `Type4Py: $(loading) In-progress: ${this.inProgressRequests} | $(testing-passed-icon) Completed: ${this.completedRequests}`;
         return this.statusBarText;
     }
 

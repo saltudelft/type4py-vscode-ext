@@ -15,6 +15,12 @@ suite('ParamHintCompletionProvider', () => {
     const varProvider = new VariableCompletionProvider(null);
     const data: InferData = JSON.parse(JSON.stringify(inferData));
     const sourceFile: string = fs.readFileSync(
+        /**
+         * NOTE: Because tsconfig does not handle moving non TS files to 'out',
+         * we must copy the Python resources manually via additional package.json scripts.
+         * This line of code relies on the script being present outside of the folder
+         * in a 'res' folder.
+        */
         path.resolve(__dirname, path.join("..", "res", "various_cases.py"))
     ).toString();
 

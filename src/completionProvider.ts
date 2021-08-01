@@ -109,7 +109,7 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
                 }
                 
                 // Map parameter data to completion items (if present)
-                inferData?.params[param].forEach((annotation, id) => {
+                inferData?.params[param]?.forEach((annotation, id) => {
                     items.push(annotationToCompletionItem(new TypeCompletionItem(annotation,
                          CompletionItemKind.TypeParameter, TypeSlots.Parameter, id, param,
                                                           line.lineNumber + 1)));
@@ -240,7 +240,7 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
         const items: TypeCompletionItem[] = [];
         const line = doc.lineAt(pos);
 
-        if (this.shouldProvideItems(line, pos)) {
+        if (this.shouldProvideItems(line, pos) && !token.isCancellationRequested) {
             const inferData = findVariableInferenceDataForActiveFilePos(line);
             this.resolvedCompletion = false;
 
@@ -261,8 +261,8 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
         // TODO: should this support multi-line?
         const lineRemainder = line.text.substr(pos.character - 1);
 
-        // Test for '<space>:<space>=' pattern
-        return pos.character > 0 && /(\s)*:(\s)*=/.test(lineRemainder);
+        // Test for '<space>=' pattern
+        return pos.character > 0 && /(\s)*=/.test(lineRemainder);
     }
 
     public async resolveCompletionItem(item: CompletionItem, token: CancellationToken) {
@@ -306,7 +306,6 @@ function findFunctionInferenceDataForActiveFilePos(pos: Position): FunctionInfer
             }
         }
     }
-
     return undefined;
 }
 

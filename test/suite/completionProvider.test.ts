@@ -117,21 +117,90 @@ suite('ParamHintCompletionProvider', () => {
         assert.deepStrictEqual(typeHints, ["str", "int"]);
     });
 
-    // test("Provide class-level param hints", async () => {
+    test("Provide function-level variable hints", async () => {
+        const pos = new vsc.Position(10, 6); // line 11, col 7
+        const providerResult = await provideCompletionItems(
+            varProvider,
+            sourceFile,
+            pos,
+            paramHintTrigger,
+            data
+        );
 
-    // });
+        const typeHints = providerResult!.items.map((value) => {
+            return value.label.toString().trim();
+        });
 
-    // test("Provide class-level return hints", async () => {
+        assert.deepStrictEqual(typeHints, ["str", "List[str]", "List[int]", "List[bytes]", "int"]);
+    });
 
-    // });
+    test("Provide class-level param hints", async () => {
+        const pos = new vsc.Position(3, 25); // line 4, col 26
+        const providerResult = await provideCompletionItems(
+            paramProvider,
+            sourceFile,
+            pos,
+            paramHintTrigger,
+            data
+        );
 
-    // test("Provide class-level variable hints", async () => {
+        const typeHints = providerResult!.items.map((value) => {
+            return value.label.toString().trim();
+        });
 
-    // });
+        assert.deepStrictEqual(typeHints, ["int", "bool", "float"]);
+    });
 
-    // test("Provide class-level function-level variable hints", async () => {
+    test("Provide class-level return hints", async () => {
+        const pos = new vsc.Position(6, 20); // line 7, col 21
+        const providerResult = await provideCompletionItems(
+            returnProvider,
+            sourceFile,
+            pos,
+            returnHintTrigger,
+            data
+        );
 
-    // });
+        const typeHints = providerResult!.items.map((value) => {
+            return value.label.toString().trim();
+        });
+
+        assert.deepStrictEqual(typeHints, ["int", "Optional[str]"]);
+    });
+
+    test("Provide class-level variable hints", async () => {
+        const pos = new vsc.Position(1, 6); // line 2, col 7
+        const providerResult = await provideCompletionItems(
+            varProvider,
+            sourceFile,
+            pos,
+            paramHintTrigger,
+            data
+        );
+
+        const typeHints = providerResult!.items.map((value) => {
+            return value.label.toString().trim();
+        });
+
+        assert.deepStrictEqual(typeHints, ["str"]);
+    });
+
+    test("Provide class-level function-level variable hints", async () => {
+        const pos = new vsc.Position(4, 15); // line 5, col 16
+        const providerResult = await provideCompletionItems(
+            varProvider,
+            sourceFile,
+            pos,
+            paramHintTrigger,
+            data
+        );
+
+        const typeHints = providerResult!.items.map((value) => {
+            return value.label.toString().trim();
+        });
+
+        assert.deepStrictEqual(typeHints, ["str", "Dict[str, Any]", "dict", "int"]);
+    });
 
     // test("provides items for first param", async () => {
     //     let param = "param_1:";

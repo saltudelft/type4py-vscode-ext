@@ -39,7 +39,20 @@ suite('ParamHintCompletionProvider', () => {
     });
 
     test("Provide return type hints", async () => {
+        const pos = new vsc.Position(9, 13); // line 10, col 14
+        const providerResult = await provideCompletionItems(
+            returnProvider,
+            sourceFile,
+            pos,
+            returnHintTrigger,
+            data
+        );
 
+        const typeHints = providerResult!.items.map((value) => {
+            return value.label.toString().trim();
+        });
+
+        assert.deepStrictEqual(typeHints, ["List[int]", "List[str]"]);
     });
 
     test("Param type no data", async () => {
@@ -87,9 +100,22 @@ suite('ParamHintCompletionProvider', () => {
         assert.deepStrictEqual(providerResult!.items, []);
     });
 
-    // test("Provide variable hints", async () => {
+    test("Provide variable hints", async () => {
+        const pos = new vsc.Position(13, 2); // line 14, col 3
+        const providerResult = await provideCompletionItems(
+            varProvider,
+            sourceFile,
+            pos,
+            paramHintTrigger,
+            data
+        );
 
-    // });
+        const typeHints = providerResult!.items.map((value) => {
+            return value.label.toString().trim();
+        });
+
+        assert.deepStrictEqual(typeHints, ["str", "int"]);
+    });
 
     // test("Provide class-level param hints", async () => {
 
@@ -254,7 +280,16 @@ async function provideCompletionItems(
     typeData: InferData
 ): Promise<vsc.CompletionList | null> {
     const doc = await vsc.workspace.openTextDocument({ language, content: documentContent });
-    await vsc.window.showTextDocument(doc, { preview: false, viewColumn: 0 });
+    const editor = await vsc.window.showTextDocument(doc, { preview: false, viewColumn: 0 });
+
+    // On return hint provider: type out -> to trigger completion items, and shift the position
+    if (provider instanceof ReturnHintCompletionProvider) {
+        await editor.edit((e) => {
+            e.insert(pos, "->");
+        });
+        pos = new vsc.Position(pos.line,pos.character+2);
+    };
+
     typestore.add(doc.fileName, typeData);
     const token = new vsc.CancellationTokenSource().token;
     const ctx = {

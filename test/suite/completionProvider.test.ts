@@ -24,37 +24,37 @@ suite('ParamHintCompletionProvider', () => {
         path.resolve(__dirname, path.join("..", "res", "various_cases.py"))
     ).toString();
 
-    // test("Return type no data", async () => {
-    //     const newSourceFile = sourceFile + "\ndef newFoo(x):\n    pass";
-    //     const pos = new vsc.Position(14, 13); // line 15, col 14
-    //     const providerResult = await provideCompletionItems(
-    //         returnProvider,
-    //         newSourceFile,
-    //         pos,
-    //         returnHintTrigger,
-    //         data
-    //     );
+    test("Return type no data", async () => {
+        const newSourceFile = sourceFile + "\ndef newFoo(x):\n    pass";
+        const pos = new vsc.Position(14, 13); // line 15, col 15
+        const providerResult = await provideCompletionItems(
+            returnProvider,
+            newSourceFile,
+            pos,
+            returnHintTrigger,
+            data
+        );
 
-    //     assert.deepStrictEqual(providerResult!.items, []);
-    // });
+        assert.deepStrictEqual(providerResult!.items, []);
+    });
 
-    // test("Provide return type hints", async () => {
+    test("Provide return type hints", async () => {
 
-    // });
+    });
 
-    // test("Param type no data", async () => {
-    //     const newSourceFile = sourceFile + "\ndef newFoo(x):\n    pass";
-    //     const pos = new vsc.Position(14, 12); // line 15, col 13
-    //     const providerResult = await provideCompletionItems(
-    //         paramProvider,
-    //         newSourceFile,
-    //         pos,
-    //         paramHintTrigger,
-    //         data
-    //     );
+    test("Param type no data", async () => {
+        const newSourceFile = sourceFile + "\ndef newFoo(x):\n    pass";
+        const pos = new vsc.Position(14, 13); // line 15, col 14
+        const providerResult = await provideCompletionItems(
+            paramProvider,
+            newSourceFile,
+            pos,
+            paramHintTrigger,
+            data
+        );
 
-    //     assert.deepStrictEqual(providerResult!.items, []);
-    // });
+        assert.deepStrictEqual(providerResult!.items, []);
+    });
 
     test("Provide param type hints", async () => {
         const pos = new vsc.Position(9, 10); // line 10, col 11
@@ -73,19 +73,19 @@ suite('ParamHintCompletionProvider', () => {
         assert.deepStrictEqual(typeHints, ["int"]);
     });
 
-    // test("Variable type no data", async () => {
-    //     const newSourceFile = sourceFile + "\nzxc = 10";
-    //     const pos = new vsc.Position(14, 3); // line 15, col 4
-    //     const providerResult = await provideCompletionItems(
-    //         varProvider,
-    //         newSourceFile,
-    //         pos,
-    //         paramHintTrigger,
-    //         data
-    //     );
+    test("Variable type no data", async () => {
+        const newSourceFile = sourceFile + "\nzxc = 10";
+        const pos = new vsc.Position(14, 4); // line 15, col 5
+        const providerResult = await provideCompletionItems(
+            varProvider,
+            newSourceFile,
+            pos,
+            paramHintTrigger,
+            data
+        );
 
-    //     assert.deepStrictEqual(providerResult!.items, []);
-    // });
+        assert.deepStrictEqual(providerResult!.items, []);
+    });
 
     // test("Provide variable hints", async () => {
 

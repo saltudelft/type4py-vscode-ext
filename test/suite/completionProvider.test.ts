@@ -3,31 +3,20 @@ import * as vsc from 'vscode';
 import { paramHintTrigger, PythonType, returnHintTrigger } from "../../src/pythonData";
 import { CompletionProvider, ParamHintCompletionProvider, ReturnHintCompletionProvider, VariableCompletionProvider } from "../../src/completionProvider";
 import { messageFor } from '../common';
-import * as inferData from '../sample-expected.json';
+import * as inferData from '../res/sample-expected.json';
 import { InferData } from '../../src/type4pyData';
 import typestore from "../../src/typestore";
 import * as fs from 'fs';
+import * as path from 'path';
 
 suite('ParamHintCompletionProvider', () => {
     const paramProvider = new ParamHintCompletionProvider(null);
     const returnProvider = new ReturnHintCompletionProvider(null);
     const varProvider = new VariableCompletionProvider(null);
     const data: InferData = JSON.parse(JSON.stringify(inferData));
-    const sourceFile: string = 
-    `class A():
-        t = 4
-
-        def __init__(self, p):
-            self.p = p
-        
-        def add(self, y):
-            return (self.p + y)
-
-    def foo(x, y):
-        a = 1
-        return x + a + a*y
-
-    v = 5`;
+    const sourceFile: string = fs.readFileSync(
+        path.resolve(__dirname, path.join("..", "res", "various_cases.py"))
+    ).toString();
 
     // test("Return type no data", async () => {
     //     const newSourceFile = sourceFile + "\ndef newFoo(x):\n    pass";
@@ -62,7 +51,7 @@ suite('ParamHintCompletionProvider', () => {
     // });
 
     test("Provide param type hints", async () => {
-        const pos = new vsc.Position(9, 9); // line 10, col 10
+        const pos = new vsc.Position(9, 10); // line 10, col 11
         const providerResult = await provideCompletionItems(
             paramProvider,
             sourceFile,
@@ -251,31 +240,6 @@ suite('ParamHintCompletionProvider', () => {
 
 const language = "python";
 
-async function providerResult(
-    provider: CompletionProvider,
-    functionText: string,
-    triggerCharacter: string,
-    trailingText?: string
-): Promise<vsc.CompletionList | null> {
-    let content = `    def func(${functionText}`;
-    const lines: string[] = content.split("\n");
-    const lastLineIdx = lines.length - 1;
-    const lastPos = new vsc.Position(lastLineIdx, lines[lastLineIdx].length);
-
-    if (trailingText) {
-        content += trailingText;
-    }
-
-    const doc = await vsc.workspace.openTextDocument({ language, content });
-    const token = new vsc.CancellationTokenSource().token;
-    const ctx = {
-        triggerCharacter: triggerCharacter,
-        triggerKind: vsc.CompletionTriggerKind.TriggerCharacter
-    };
-
-    return provider.provideCompletionItems(doc, lastPos, token, ctx);
-}
-
 async function provideCompletionItems(
     provider: CompletionProvider, 
     documentContent: string,
@@ -295,18 +259,43 @@ async function provideCompletionItems(
     return provider.provideCompletionItems(doc, pos, token, ctx);
 }
 
-const typeHints = (): string[] => Object.values(PythonType).sort();
+// async function providerResult(
+//     provider: CompletionProvider,
+//     functionText: string,
+//     triggerCharacter: string,
+//     trailingText?: string
+// ): Promise<vsc.CompletionList | null> {
+//     let content = `    def func(${functionText}`;
+//     const lines: string[] = content.split("\n");
+//     const lastLineIdx = lines.length - 1;
+//     const lastPos = new vsc.Position(lastLineIdx, lines[lastLineIdx].length);
 
-const typingHints = (): string[] => {
-    const prefix = "typing.";
-    return [
-        `Dict[`,
-        `List[`,
-        `Set[`,
-        `Tuple[`,
-        `${prefix}Dict[`,
-        `${prefix}List[`,
-        `${prefix}Set[`,
-        `${prefix}Tuple[`
-    ];
-};
+//     if (trailingText) {
+//         content += trailingText;
+//     }
+
+//     const doc = await vsc.workspace.openTextDocument({ language, content });
+//     const token = new vsc.CancellationTokenSource().token;
+//     const ctx = {
+//         triggerCharacter: triggerCharacter,
+//         triggerKind: vsc.CompletionTriggerKind.TriggerCharacter
+//     };
+
+//     return provider.provideCompletionItems(doc, lastPos, token, ctx);
+// }
+
+// const typeHints = (): string[] => Object.values(PythonType).sort();
+
+// const typingHints = (): string[] => {
+//     const prefix = "typing.";
+//     return [
+//         `Dict[`,
+//         `List[`,
+//         `Set[`,
+//         `Tuple[`,
+//         `${prefix}Dict[`,
+//         `${prefix}List[`,
+//         `${prefix}Set[`,
+//         `${prefix}Tuple[`
+//     ];
+// };

@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import { InferApiData, InferData, transformInferApiData } from "../../src/type4pyData";
-import * as sampleResponse from "../sample-response.json";
-import * as sampleTransformed from "../sample-expected.json";
+import * as sampleResponse from "../res/sample-response.json";
+import * as sampleTransformed from "../res/sample-expected.json";
 
 
 suite('Type4Py Data', () => {

@@ -14,11 +14,15 @@ export class Type4PyOutputChannel {
     }
 
     public appendInProgress(fileName: string) {
-        this.outputChannel.appendLine(`[${new Date().toLocaleString()}][${fileName}] Inferring types...`);
+        this.outputChannel.appendLine(
+            `[${new Date().toLocaleString()}][${fileName}] Inferring types...`
+        );
     }
 
     public appendCompleted(fileName: string) {
-        this.outputChannel.appendLine(`[${new Date().toLocaleString()}][${fileName}] Type prediction completed!`);
+        this.outputChannel.appendLine(
+            `[${new Date().toLocaleString()}][${fileName}] Type prediction completed!`
+        );
     }
 
     public appendError(fileName: string, errorMsg: string) {
@@ -45,12 +49,14 @@ export class Type4PyStatusBar {
         this.statusBar.show();
         context.subscriptions.push(this.statusBar);
 
-        vscode.commands.registerCommand('showOutputChannel', async () => {outputChannel.show()});
+        vscode.commands.registerCommand('showOutputChannel', async () => {outputChannel.show();});
         this.statusBar.command = 'showOutputChannel';
     }
 
     private getUpdatedStatusBar(): string {
-        this.statusBarText = `Type4Py: $(loading) In-progress: ${this.inProgressRequests} | $(testing-passed-icon) Completed: ${this.completedRequests}`;
+        this.statusBarText = 
+            `Type4Py: $(loading) In-progress: ${this.inProgressRequests} | ` +
+            `$(testing-passed-icon) Completed: ${this.completedRequests}`;
         return this.statusBarText;
     }
 
@@ -69,7 +75,7 @@ export class Type4PyStatusBar {
 
     public updateInProgressWithErrors() {
         this.inProgressRequests -= 1;
-        this.statusBar.text = this.getUpdatedStatusBar()
+        this.statusBar.text = this.getUpdatedStatusBar();
         this.statusBar.show();
     }
 }

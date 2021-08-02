@@ -53,7 +53,7 @@ export function activate(context: vscode.ExtensionContext): Type4PyApi {
         await infer(settings,
                     context,
                     t4pyStatusBar,
-                    t4pyOutputChannel)
+                    t4pyOutputChannel);
     });
     context.subscriptions.push(inferCommand);
     
@@ -63,7 +63,7 @@ export function activate(context: vscode.ExtensionContext): Type4PyApi {
             if (context.workspaceState.get(
                 vscode.window.activeTextEditor?.document.fileName!
             ) === undefined) {
-                    await infer(settings, context, t4pyStatusBar, t4pyOutputChannel, true)
+                    await infer(settings, context, t4pyStatusBar, t4pyOutputChannel, true);
                 }
             }
          });

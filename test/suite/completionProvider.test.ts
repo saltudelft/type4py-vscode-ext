@@ -1,7 +1,12 @@
 import * as assert from 'assert';
 import * as vsc from 'vscode';
 import { paramHintTrigger, PythonType, returnHintTrigger } from "../../src/pythonData";
-import { CompletionProvider, ParamHintCompletionProvider, ReturnHintCompletionProvider, VariableCompletionProvider } from "../../src/completionProvider";
+import {
+    CompletionProvider,
+    ParamHintCompletionProvider,
+    ReturnHintCompletionProvider,
+    VariableCompletionProvider
+} from "../../src/completionProvider";
 import { messageFor } from '../common';
 import * as inferData from '../res/sample-expected.json';
 import { InferData } from '../../src/type4pyData';

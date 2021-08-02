@@ -1,5 +1,10 @@
 import * as vscode from 'vscode';
-import { ParamHintCompletionProvider, ReturnHintCompletionProvider, TypeCompletionItem, VariableCompletionProvider } from './completionProvider';
+import {
+    ParamHintCompletionProvider,
+    ReturnHintCompletionProvider,
+    TypeCompletionItem,
+    VariableCompletionProvider
+} from './completionProvider';
 import { InferApiData, InferApiPayload, transformInferApiData } from "./type4pyData";
 import { paramHintTrigger, returnHintTrigger} from "./pythonData";
 import { Type4PySettings } from './settings';
@@ -8,7 +13,7 @@ import axios from 'axios';
 import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, INFER_URL_BASE_DEV, TELEMETRY_REQ_TIMEOUT,
          TELEMETRY_URL_BASE, TELEMETRY_URL_BASE_DEV} from './constants';
 import * as fs from 'fs';
-import { ERROR_MESSAGES } from './messages';
+import { ERROR_MESSAGES, TELEMETRY_REQUEST_MESSAGE } from './messages';
 import * as path from 'path';
 import {createHash, randomBytes} from 'crypto';
 
@@ -48,15 +53,19 @@ export function activate(context: vscode.ExtensionContext): Type4PyApi {
     // Automatic type inference when opening a Python source file.
     vscode.workspace.onDidOpenTextDocument( async () => {
         if (settings.autoInfer) {
-            if (context.workspaceState.get(vscode.window.activeTextEditor?.document.fileName!) === undefined) {
-                    infer(settings, context, true)
+            if (context.workspaceState.get(
+                vscode.window.activeTextEditor?.document.fileName!
+            ) === undefined) {
+                    infer(settings, context, true);
                 }
             }
          });
     
     // Sharing accepted type predictions based on the user's consent
-    const comm = vscode.commands.registerCommand('submitAcceptedType', (typeCompletionItem: TypeCompletionItem) => {
-       console.log(`Selected ${typeCompletionItem.label} for ${typeCompletionItem.typeSlot} with ${typeCompletionItem.rank}`);
+    const comm = vscode.commands.registerCommand('submitAcceptedType',
+    (typeCompletionItem: TypeCompletionItem) => {
+       console.log(`Selected ${typeCompletionItem.label} for ${typeCompletionItem.typeSlot}` +
+                    `with ${typeCompletionItem.rank}`);
        if (settings.shareAcceptedPredsEnabled) {
             const f = vscode.window.activeTextEditor?.document.fileName!;                       
             var telemetry_url;
@@ -77,8 +86,10 @@ export function activate(context: vscode.ExtensionContext): Type4PyApi {
                     fp: settings.fliterPredsEnabled ? 1 : 0,
                     idn: typeCompletionItem.identifierName,
                     tsl: typeCompletionItem.typeSlotLineNo,
-                    sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base)
-                }
+                    sid: context.workspaceState.get(
+                        path.parse(vscode.workspace.asRelativePath(f)).base
+                    )
+                };
                 context.workspaceState.update("lastTypePrediction", null);
             } else {
                 req_params = {
@@ -87,8 +98,10 @@ export function activate(context: vscode.ExtensionContext): Type4PyApi {
                     fp: settings.fliterPredsEnabled ? 1 : 0,
                     idn: typeCompletionItem.identifierName,
                     tsl: typeCompletionItem.typeSlotLineNo,
-                    sid: context.workspaceState.get(path.parse(vscode.workspace.asRelativePath(f)).base) 
-                    }
+                    sid: context.workspaceState.get(
+                        path.parse(vscode.workspace.asRelativePath(f)).base
+                    ) 
+                    };
             }
             const telemResult = axios.get(telemetry_url,
                 {timeout: TELEMETRY_REQ_TIMEOUT , params: req_params}
@@ -97,24 +110,25 @@ export function activate(context: vscode.ExtensionContext): Type4PyApi {
        
    });
 
-   if (context.globalState.get("activation_id") == undefined) {
+   if (context.globalState.get("activation_id") === undefined) {
         if (vscode.env.isTelemetryEnabled) {
             settings.setShareAcceptedPreds = vscode.env.isTelemetryEnabled;
             } else {
                 // Sharing accepted type predctions based on the user's consent
-                vscode.window.showInformationMessage("Would you like to share accepted type predictions with us for research purposes?",
-                ...["Yes", "No"]).then((answer) => {
+                vscode.window.showInformationMessage(
+                    TELEMETRY_REQUEST_MESSAGE,
+                    ...["Yes", "No"]).then((answer) => {
                     if (answer === "Yes") {
                         settings.setShareAcceptedPreds = true;
                     } else {
                         settings.setShareAcceptedPreds = false;
                     }}
-                )
+                );
             }
    }
    
     // Each installation of the extension gets a random activation ID once!
-    if (context.globalState.get("activation_id") == undefined) {
+    if (context.globalState.get("activation_id") === undefined) {
         context.globalState.update("activation_id", randomBytes(16).toString('hex'));
     }
     
@@ -164,7 +178,9 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             var inferUrl;
 
             const relativePath = path.parse(vscode.workspace.asRelativePath(currentPath)).base;
-            vscode.window.showInformationMessage(`Inferring type annotations for the file ${relativePath}`);
+            vscode.window.showInformationMessage(
+                `Inferring type annotations for the file ${relativePath}`
+            );
 
             // Send request
             //console.log(`Sending request with TC: ${settings.tcEnabled}`);
@@ -176,15 +192,17 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             }
 
             const inferResult = await axios.post<InferApiPayload>(inferUrl, fileContents,
-                { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT, params: {
-                    // TODO: check with server side; this can be passed as boolean
-                    //tc: settings.tcEnabled ? 0 : 0,
-                    tc: 0,
-                    fp: settings.fliterPredsEnabled ? 1 : 0,
-                    ai: context.globalState.get("activation_id"),
-                    fh: createHash('sha256').update(currentPath, 'utf8').digest('hex'),
-                    ev: vscode.extensions.getExtension('saltud.type4py')?.packageJSON.version
-                }}
+                { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT, params:
+                    {
+                        // TODO: check with server side; this can be passed as boolean
+                        //tc: settings.tcEnabled ? 0 : 0,
+                        tc: 0,
+                        fp: settings.fliterPredsEnabled ? 1 : 0,
+                        ai: context.globalState.get("activation_id"),
+                        fh: createHash('sha256').update(currentPath, 'utf8').digest('hex'),
+                        ev: vscode.extensions.getExtension('saltud.type4py')?.packageJSON.version
+                    }
+                }
             );
             console.log(inferResult);
             
@@ -200,9 +218,9 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 // before giving new predictions.
                 if (context.workspaceState.get("lastTypePrediction") !== null) {
                     vscode.commands.executeCommand("submitAcceptedType",
-                                    context!.workspaceState.get("lastTypePrediction")).then(undefined, err => {
-                                        console.error("Couldn't submit the accepted/rejected type!")
-                                    });
+                        context!.workspaceState.get("lastTypePrediction")).then(undefined, err => {
+                            console.error("Couldn't submit the accepted/rejected type!");
+                        });
                 }
 
                 // Transform & cache API data
@@ -216,10 +234,11 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 
                 // Session ID of the current opened file assigned by the server.
                 context.workspaceState.update(relativePath,
-                                              inferResult.data.response['session_id'])
+                                              inferResult.data.response['session_id']);
                 // Remembers the last opened file for the auto-infer feature.
                 context.workspaceState.update(currentPath, true);
-                // Rememebers the last canceled type predictions for submission (based on the user's consent)
+                // Rememebers the last canceled type predictions for submission
+                // (based on the user's consent)
                 context.workspaceState.update("lastTypePrediction", null);
 
             }

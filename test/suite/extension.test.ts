@@ -25,7 +25,8 @@ suite('Extension Test Suite', () => {
     test("Infer without open file", async () => {
         await vscode.commands.executeCommand("workbench.action.closeAllEditors");
         await vscode.commands.executeCommand("type4py.infer");
-        chai.expect(vscode.window.showErrorMessage).to.have.been.called.with(ERROR_MESSAGES.noActiveFile);
+        chai.expect(vscode.window.showErrorMessage).to.have.been
+            .called.with(ERROR_MESSAGES.noActiveFile);
     });
 
     test("Infer with empty file", async () => {
@@ -33,7 +34,8 @@ suite('Extension Test Suite', () => {
         await vscode.window.showTextDocument(doc, { preview: false, viewColumn: 0 });
         await vscode.commands.executeCommand("type4py.infer");
 
-        chai.expect(vscode.window.showErrorMessage).to.have.been.called.with(ERROR_MESSAGES.emptyFile);
+        chai.expect(vscode.window.showErrorMessage).to.have.been
+            .called.with(ERROR_MESSAGES.emptyFile);
     });
 
     test("Infer with non-Python file", async () => {
@@ -43,7 +45,8 @@ suite('Extension Test Suite', () => {
         await vscode.window.showTextDocument(doc, { preview: false, viewColumn: 0 });
         await vscode.commands.executeCommand("type4py.infer");
 
-        chai.expect(vscode.window.showErrorMessage).to.have.been.called.with(ERROR_MESSAGES.nonPythonFile);
+        chai.expect(vscode.window.showErrorMessage).to.have.been
+            .called.with(ERROR_MESSAGES.nonPythonFile);
     });
 
     test("Infer with Python file", async () => {
@@ -94,7 +97,8 @@ suite('Extension Test Suite', () => {
     //     });
 
     //     await vscode.commands.executeCommand("type4py.infer");
-    //     chai.expect(vscode.window.showErrorMessage).to.have.been.called.with(ERROR_MESSAGES.emptyPayload);
+    //     chai.expect(vscode.window.showErrorMessage).to.have.been
+    //              .called.with(ERROR_MESSAGES.emptyPayload);
     // });
 
     // test("Infer with response error", async () => {

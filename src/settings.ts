@@ -44,10 +44,14 @@ export class Type4PySettings {
     }
 
     private initialize() {
-        //const tcEnable: boolean | undefined = workspace.getConfiguration('workspace').get('typeCheckEnabled');
-        const filterPreds: boolean | undefined = workspace.getConfiguration('workspace').get('filterPredictionsEnabled');
-        const shareAcceptPreds: boolean | undefined = workspace.getConfiguration('workspace').get('shareAcceptedPredictions');
-        const autoInfer: boolean | undefined = workspace.getConfiguration('workspace').get('autoInferEnabled');
+        //const tcEnable: boolean | undefined = workspace
+        //.getConfiguration('workspace').get('typeCheckEnabled');
+        const filterPreds: boolean | undefined = workspace
+            .getConfiguration('workspace').get('filterPredictionsEnabled');
+        const shareAcceptPreds: boolean | undefined = workspace
+            .getConfiguration('workspace').get('shareAcceptedPredictions');
+        const autoInfer: boolean | undefined = workspace
+            .getConfiguration('workspace').get('autoInferEnabled');
         
         // if (tcEnable !== undefined) {
         //     this._tcEnabled = tcEnable;

@@ -149,7 +149,7 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
         try {
             // Read file contents
             const currentPath = activeDocument.fileName;
-            const fileContents = fs.readFileSync(currentPath);
+            const fileContents = activeDocument.getText();
             var infer_url;
 
             const relativePath = path.parse(vscode.workspace.asRelativePath(currentPath)).base;

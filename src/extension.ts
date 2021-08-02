@@ -12,8 +12,12 @@ import { ERROR_MESSAGES } from './messages';
 import * as path from 'path';
 import {createHash, randomBytes} from 'crypto';
 
+export interface Type4PyApi {
+    typestore: typeof typestore
+}
+
 // Called when the extension is activated.
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext): Type4PyApi {
 
     const settings = new Type4PySettings();
 
@@ -120,6 +124,11 @@ export function activate(context: vscode.ExtensionContext) {
             context.workspaceState.update(k, undefined);
         }
     }
+
+    // Expose public API
+    return {
+        typestore
+    };
 }
 
 // Called when the extension is deactivated.
@@ -221,6 +230,5 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             }                
         }
 
-        console.log("No errors!");
     }
 }

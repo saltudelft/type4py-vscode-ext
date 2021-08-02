@@ -78,6 +78,7 @@ External contributions are welcome such as bug fixes and improvements! Feel free
 ## Running tests
 1. Make sure that all instances of VSCode are closed on the machine.
 2. Run `npm run test-compile`
+3. **Note**: The *Infer with Python Files* test in `test/suite/extension.test.ts` requires that the local [type4py](https://github.com/saltudelft/type4py) server is running under the dev mode config specified in `src/utils.ts`.
 
 # Roadmap
 Here are the desirable features for future releases.

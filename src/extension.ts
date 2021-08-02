@@ -36,7 +36,9 @@ export function activate(context: vscode.ExtensionContext) {
     );
 
     // Register command for inferring type hints
-    const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => { infer(settings, context) });
+    const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => {
+        await infer(settings, context);
+    });
     context.subscriptions.push(inferCommand);
     
     // Automatic type inference when opening a Python source file.
@@ -150,7 +152,7 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             // Read file contents
             const currentPath = activeDocument.fileName;
             const fileContents = activeDocument.getText();
-            var infer_url;
+            var inferUrl;
 
             const relativePath = path.parse(vscode.workspace.asRelativePath(currentPath)).base;
             vscode.window.showInformationMessage(`Inferring type annotations for the file ${relativePath}`);
@@ -159,12 +161,12 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             //console.log(`Sending request with TC: ${settings.tcEnabled}`);
             //console.log(`Sending request with FP: ${settings.fliterPredsEnabled}`)
             if (context.extensionMode === vscode.ExtensionMode.Production) {
-                infer_url = INFER_URL_BASE;
+                inferUrl = INFER_URL_BASE;
             } else {
-                infer_url = INFER_URL_BASE_DEV; // Development and testing
+                inferUrl = INFER_URL_BASE_DEV; // Development and testing
             }
 
-            const inferResult = await axios.post<InferApiPayload>(infer_url, fileContents,
+            const inferResult = await axios.post<InferApiPayload>(inferUrl, fileContents,
                 { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT, params: {
                     // TODO: check with server side; this can be passed as boolean
                     //tc: settings.tcEnabled ? 0 : 0,
@@ -185,10 +187,9 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                     vscode.window.showErrorMessage(ERROR_MESSAGES.emptyPayload);
                 }
             } else {
-                
                 // Submitting the last cancelled prediciton based on the user's consent 
                 // before giving new predictions.
-                if (context.workspaceState.get("lastTypePrediction") != null) {
+                if (context.workspaceState.get("lastTypePrediction") !== null) {
                     vscode.commands.executeCommand("submitAcceptedType",
                                     context!.workspaceState.get("lastTypePrediction")).then(undefined, err => {
                                         console.error("Couldn't submit the accepted/rejected type!")
@@ -198,7 +199,6 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 // Transform & cache API data
                 const inferResultData: InferApiData = inferResult.data.response;
                 const transformedInferResultData = transformInferApiData(inferResultData);
-                console.log(transformedInferResultData);
                 typestore.add(currentPath, transformedInferResultData);
                 
                 vscode.window.showInformationMessage(
@@ -220,5 +220,7 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 vscode.window.showErrorMessage(error.message);
             }                
         }
+
+        console.log("No errors!");
     }
 }

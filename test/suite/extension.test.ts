@@ -64,7 +64,7 @@ suite('Extension Test Suite', () => {
         // After inference, the data should now be available
         await vscode.commands.executeCommand("type4py.infer");
         chai.expect(typestore.get(activeDocument)).not.to.be.undefined;
-    });
+    }).timeout(10000);
 
     // test("Infer with exception", async () => {
     //     // Open Python file

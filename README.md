@@ -32,7 +32,7 @@ This extension provides machine learning-based type autocompletion for Python, w
 1. In VSCode, select a Python source file of your interest.
 2. Go to `View -> Command Palette -> Type4Py: Infer type annotations`.
 3. Depending on the file size, after a couple of seconds, you can see the in-progress/completed requests at the bottom left of VSCode. <p align="center"><img src="images/status-bar.png" alt="Type4Py's status bar" width=375/></p>
-4. Now, you can start adding predicted type annotations to your code, similar to the [Quick Start](#quick-start) example above.
+4. After the completion of your request, you can now start adding predicted type annotations to your code, similar to the [Quick Start](#quick-start) example above.
 
 > **Tip:** At the bottom left of VSCode, click on the status bar of Type4py to see the extension's logs and errors.
 

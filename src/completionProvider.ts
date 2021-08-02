@@ -19,6 +19,7 @@ import { paramHintTrigger, returnHintTrigger } from './pythonData';
 import typestore from './typestore';
 import { isWithinLineBounds } from "./utils";
 import { TypeSlots } from "./pythonData";
+import { EXTENSION_NAME } from "./constants";
 
 
 export abstract class CompletionProvider {
@@ -69,6 +70,7 @@ export class TypeCompletionItem extends CompletionItem {
         this.rank = rank;
         this.identifierName = identifierName;
         this.typeSlotLineNo = typeSlotLineNo;
+        this.detail = EXTENSION_NAME;
     }
 }
 

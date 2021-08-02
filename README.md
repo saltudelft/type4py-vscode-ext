@@ -1,4 +1,6 @@
 # VSCode Extension of Type4Py
+[![vsm-version](https://img.shields.io/visual-studio-marketplace/v/saltud.type4py?style=flat&label=VS%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=saltud.type4py)
+
 This extension provides machine learning-based type autocompletion for Python, which assists developers to gradually add type annotations to their existing codebases.
 
 - [Core Features](#core-features)
@@ -82,6 +84,7 @@ Here are the desirable features for future releases.
 - Implementing a caching solution to preserve type predictions when source files change.
 - Enabling the type-checking process for the Type4Py's predictions using [mypy](https://github.com/python/mypy), preferably at the client-side.
 - Fine-tuning the (pre-trained) Type4Py model on users' projects to learn project-specific types.
+- Releasing a local version of the Type4Py model and its pipeline that can be queried on users' machines.
 
 # Contributors
 - Amir M. Mir (@mir-am)

@@ -78,7 +78,8 @@
 		"compile": "webpack --mode none",
 		"watch": "webpack --mode none --watch",
 		"test": "tsc -p . && cp -r ./test/res ./out/test && node out/test/runTest.js",
-		"test-compile": "npm run compile && npm run test"
+		"test-compile": "npm run compile && npm run test",
+		"lint": "eslint --fix ./**/*.ts"
 	},
 	"devDependencies": {
 		"@types/chai": "^4.2.21",

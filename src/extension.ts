@@ -16,6 +16,7 @@ import * as fs from 'fs';
 import { ERROR_MESSAGES, TELEMETRY_REQUEST_MESSAGE } from './messages';
 import * as path from 'path';
 import {createHash, randomBytes} from 'crypto';
+import { Type4PyOutputChannel, Type4PyStatusBar } from './ui';
 
 export interface Type4PyApi {
     typestore: typeof typestore
@@ -43,10 +44,16 @@ export function activate(context: vscode.ExtensionContext): Type4PyApi {
             paramHintTrigger
         ),
     );
-
+    
+    var t4pyOutputChannel = new Type4PyOutputChannel(context);
+    var t4pyStatusBar = new Type4PyStatusBar(context, t4pyOutputChannel);
+    
     // Register command for inferring type hints
-    const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => {
-        await infer(settings, context);
+    const inferCommand = vscode.commands.registerCommand('type4py.infer', async () => { 
+        await infer(settings,
+                    context,
+                    t4pyStatusBar,
+                    t4pyOutputChannel)
     });
     context.subscriptions.push(inferCommand);
     
@@ -56,7 +63,7 @@ export function activate(context: vscode.ExtensionContext): Type4PyApi {
             if (context.workspaceState.get(
                 vscode.window.activeTextEditor?.document.fileName!
             ) === undefined) {
-                    infer(settings, context, true);
+                    await infer(settings, context, t4pyStatusBar, t4pyOutputChannel, true)
                 }
             }
          });
@@ -155,8 +162,13 @@ export function deactivate() {
  *
  * @param settings Type4Py settings to use
  */
-async function infer(settings: Type4PySettings, context: vscode.ExtensionContext,
-                     auto: boolean=false): Promise<void> {
+async function infer(
+    settings: Type4PySettings,
+    context: vscode.ExtensionContext,
+    statusBar: Type4PyStatusBar,
+    outputChannel: Type4PyOutputChannel,
+    auto: boolean=false
+): Promise<void> {
  
     // Get current file being editted
     const activeDocument = vscode.window.activeTextEditor?.document;
@@ -178,9 +190,9 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             var inferUrl;
 
             const relativePath = path.parse(vscode.workspace.asRelativePath(currentPath)).base;
-            vscode.window.showInformationMessage(
-                `Inferring type annotations for the file ${relativePath}`
-            );
+            statusBar.updateInProgress();
+            outputChannel.appendInProgress(relativePath);
+            outputChannel.show();
 
             // Send request
             //console.log(`Sending request with TC: ${settings.tcEnabled}`);
@@ -210,8 +222,12 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
             if (!inferResult.data.response) {
                 if (inferResult.data.error) {
                     vscode.window.showErrorMessage(inferResult.data.error);
+                    statusBar.updateInProgressWithErrors();
+                    outputChannel.appendError(relativePath, inferResult.data.error);
                 } else {
                     vscode.window.showErrorMessage(ERROR_MESSAGES.emptyPayload);
+                    statusBar.updateInProgressWithErrors();
+                    outputChannel.appendError(relativePath, ERROR_MESSAGES.emptyPayload);
                 }
             } else {
                 // Submitting the last cancelled prediciton based on the user's consent 
@@ -228,9 +244,11 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
                 const transformedInferResultData = transformInferApiData(inferResultData);
                 typestore.add(currentPath, transformedInferResultData);
                 
-                vscode.window.showInformationMessage(
-                    `Type prediction for ${relativePath} completed!`
-                );
+                // vscode.window.setStatusBarMessage(
+                //     `Type prediction for ${relativePath} completed!`
+                // );
+                statusBar.updateCompleted();
+                outputChannel.appendCompleted(relativePath);
                 
                 // Session ID of the current opened file assigned by the server.
                 context.workspaceState.update(relativePath,
@@ -245,7 +263,8 @@ async function infer(settings: Type4PySettings, context: vscode.ExtensionContext
         } catch (error) {
             console.error(error);
             if (error.message) {
-                vscode.window.showErrorMessage(error.message);
+                statusBar.updateInProgressWithErrors();
+                vscode.window.showErrorMessage(ERROR_MESSAGES.connectionError);
             }                
         }
 

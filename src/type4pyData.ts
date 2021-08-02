@@ -166,8 +166,19 @@ export function transformInferApiData(apiData: InferApiData): InferData {
         };
 
         functionInferData.push(funcEntry);
+
+        // Workaround: set every variable location to the function location,
+        // essentially ensuring the API decides the variable annotation based
+        // on the key (name) of the variable.
+        // This allows multiple variables with the same identifier in function
+        // scope to have the same annotations.
+        const varLocations: InferApiVarLocations = {};
+        for (const loc of Object.keys(func.fn_var_ln)) {
+            varLocations[loc] = func.fn_lc;
+        }
+
         variableInferData.push(...extractVariableInferData(
-            func.variables_p, func.fn_var_ln
+            func.variables_p, varLocations
         ));
     }
 

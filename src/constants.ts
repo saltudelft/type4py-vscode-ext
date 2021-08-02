@@ -5,3 +5,5 @@ export const TELEMETRY_URL_BASE_DEV = `http://localhost:5001/api/telemetry/accep
 
 export const INFER_REQUEST_TIMEOUT = 60000;
 export const TELEMETRY_REQ_TIMEOUT = 5000;
+
+export const EXTENSION_NAME = "Type4Py";

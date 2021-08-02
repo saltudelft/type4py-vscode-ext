@@ -1,4 +1,6 @@
 # VSCode Extension of Type4Py
+[![vsm-version](https://img.shields.io/visual-studio-marketplace/v/saltud.type4py?style=flat&label=VS%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=saltud.type4py)
+
 This extension provides machine learning-based type autocompletion for Python, which assists developers to gradually add type annotations to their existing codebases.
 
 - [Core Features](#core-features)
@@ -29,10 +31,12 @@ This extension provides machine learning-based type autocompletion for Python, w
 ## Step-by-Step
 1. In VSCode, select a Python source file of your interest.
 2. Go to `View -> Command Palette -> Type4Py: Infer type annotations`.
-3. Depending on the file size, after a couple of seconds, you will see a completion message on the bottom right of VSCode.
-4. Now, you can start adding predicted type annotations to your code, similar to the [Quick Start](#quick-start) example above.
+3. Depending on the file size, after a couple of seconds, you can see the in-progress/completed requests at the bottom left of VSCode. <p align="center"><img src="images/status-bar.png" alt="Type4Py's status bar" width=375/></p>
+4. After the completion of your request, you can now start adding predicted type annotations to your code, similar to the [Quick Start](#quick-start) example above.
 
-> **Note:** You can also enable automatic type inference when opening Python files. To do so, see [settings](#settings).
+> **Tip:** At the bottom left of VSCode, click on the status bar of Type4py to see the extension's logs and errors.
+
+> **Tip:** You can also enable automatic type inference when opening Python files. To do so, see [settings](#settings).
 
 ## Considerations
 - Do not edit the selected source file after running the Type4Py extension. That is, add the relevant predicted types to the code, save the file and then edit as you wish. We will drop this consideration once the [caching solution](#roadmap) is implemented.
@@ -85,6 +89,7 @@ Here are the desirable features for future releases.
 - Implementing a caching solution to preserve type predictions when source files change.
 - Enabling the type-checking process for the Type4Py's predictions using [mypy](https://github.com/python/mypy), preferably at the client-side.
 - Fine-tuning the (pre-trained) Type4Py model on users' projects to learn project-specific types.
+- Releasing a local version of the Type4Py model and its pipeline that can be queried on users' machines.
 
 # Contributors
 - Amir M. Mir (@mir-am)

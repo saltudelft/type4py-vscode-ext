@@ -41,9 +41,9 @@ export abstract class CompletionProvider {
             this.vscContext!.workspaceState.update("lastTypePrediction", currTypeSelection);
         } else {
             commands.executeCommand("submitAcceptedType",
-                                    this.vscContext!.workspaceState.get("lastTypePrediction")).then(undefined, err => {
-                                        console.error("Couldn't submit the accepted/rejected type!");
-                                    });
+                this.vscContext!.workspaceState.get("lastTypePrediction")).then(undefined, err => {
+                    console.error("Couldn't submit the accepted/rejected type!");
+                });
             this.vscContext!.workspaceState.update("lastTypePrediction", currTypeSelection);
         }
     }
@@ -77,7 +77,8 @@ export class TypeCompletionItem extends CompletionItem {
 /**
  * Provides one or more parameter type hint {@link CompletionItem}.
  */
-export class ParamHintCompletionProvider extends CompletionProvider implements CompletionItemProvider {
+export class ParamHintCompletionProvider extends CompletionProvider
+    implements CompletionItemProvider {
 
     private paramName: string = "";
     private paramLineNo: number = -1;
@@ -111,7 +112,7 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
                 }
                 
                 // Map parameter data to completion items (if present)
-                inferData?.params[param].forEach((annotation, id) => {
+                inferData?.params[param]?.forEach((annotation, id) => {
                     items.push(annotationToCompletionItem(new TypeCompletionItem(annotation,
                          CompletionItemKind.TypeParameter, TypeSlots.Parameter, id, param,
                                                           line.lineNumber + 1)));
@@ -133,7 +134,11 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
         return !param || /[!:?/\\{}.+/=)'";@&£%¤|<>$^~¨ -]/.test(param) ? null : param;
     }
 
-    private shouldProvideItems(precedingText: string, activePos: Position, doc: TextDocument): boolean {
+    private shouldProvideItems(
+        precedingText: string,
+        activePos: Position,
+        doc: TextDocument
+    ): boolean {
 
         if (activePos.character > 0 && !/#/.test(precedingText)) {
             let provide = /^[ \t]*(def |async *def )/.test(precedingText);
@@ -143,7 +148,9 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
                 const previousLines = doc.getText(
                     new Range(doc.lineAt(activePos.line - nLinesToCheck).range.start, activePos)
                 );
-                provide = new RegExp(`^[ \t]*(async *)?def(?![\\s\\S]+(\\):|-> *[^:\\s]+:))`, "m").test(previousLines);
+                provide = new RegExp(
+                    `^[ \t]*(async *)?def(?![\\s\\S]+(\\):|-> *[^:\\s]+:))`, "m"
+                ).test(previousLines);
             }
             return provide;
         }
@@ -151,8 +158,10 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
     }
 
     public async resolveCompletionItem(item: CompletionItem, token: CancellationToken) {
-        var currTypeSelection = new TypeCompletionItem("", CompletionItemKind.TypeParameter, TypeSlots.Parameter,
-                                                       -1, this.paramName, this.paramLineNo);
+        var currTypeSelection = new TypeCompletionItem(
+            "", CompletionItemKind.TypeParameter, TypeSlots.Parameter,
+            -1, this.paramName, this.paramLineNo
+        );
         if (this.resolvedCompletion === false) {
             this.submitCanceledPrediction(currTypeSelection);
             this.resolvedCompletion = true;
@@ -164,7 +173,8 @@ export class ParamHintCompletionProvider extends CompletionProvider implements C
 /**
  * Provides one or more return type hint {@link CompletionItem}.
  */
-export class ReturnHintCompletionProvider extends CompletionProvider implements CompletionItemProvider {
+export class ReturnHintCompletionProvider extends CompletionProvider
+    implements CompletionItemProvider {
 
     private functionName: string = "";
     private functionLineNo: number = -1;
@@ -210,8 +220,10 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
     }
 
     public async resolveCompletionItem(item: CompletionItem, token: CancellationToken) {
-        var currTypeSelection = new TypeCompletionItem("", CompletionItemKind.TypeParameter, TypeSlots.ReturnType,
-                                                       -1, this.functionName, this.functionLineNo);
+        var currTypeSelection = new TypeCompletionItem(
+            "", CompletionItemKind.TypeParameter, TypeSlots.ReturnType,
+            -1, this.functionName, this.functionLineNo
+        );
         if (this.resolvedCompletion === false) {
             this.submitCanceledPrediction(currTypeSelection);
             this.resolvedCompletion = true;
@@ -223,7 +235,8 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
 /**
  * Provides one or more variable type hint {@link CompletionItem}.
  */
- export class VariableCompletionProvider extends CompletionProvider implements CompletionItemProvider {
+export class VariableCompletionProvider extends CompletionProvider
+    implements CompletionItemProvider {
 
     private variableName: string = "";
     private variableLineNo: number = -1;
@@ -242,7 +255,7 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
         const items: TypeCompletionItem[] = [];
         const line = doc.lineAt(pos);
 
-        if (this.shouldProvideItems(line, pos)) {
+        if (this.shouldProvideItems(line, pos) && !token.isCancellationRequested) {
             const inferData = findVariableInferenceDataForActiveFilePos(line);
             this.resolvedCompletion = false;
 
@@ -252,8 +265,11 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
             }
             // Map variable data to completion items (if present)
             inferData?.annotations.forEach((annotation, id) => {
-                items.push(annotationToCompletionItem(new TypeCompletionItem(annotation, CompletionItemKind.TypeParameter,
-                                                      TypeSlots.Variable, id, this.variableName, this.variableLineNo)));
+                items.push(annotationToCompletionItem(
+                    new TypeCompletionItem(
+                        annotation, CompletionItemKind.TypeParameter,
+                        TypeSlots.Variable, id, this.variableName, this.variableLineNo
+                    )));
             });
         }
         return Promise.resolve(new CompletionList(items, false));
@@ -263,14 +279,16 @@ export class ReturnHintCompletionProvider extends CompletionProvider implements 
         // TODO: should this support multi-line?
         const lineRemainder = line.text.substr(pos.character - 1);
 
-        // Test for '<space>:<space>=' pattern
-        return pos.character > 0 && /(\s)*:(\s)*=/.test(lineRemainder);
+        // Test for '<space>=' pattern
+        return pos.character > 0 && /(\s)*=/.test(lineRemainder);
     }
 
     public async resolveCompletionItem(item: CompletionItem, token: CancellationToken) {
         console.log("Resolved Completion items!");
-        var currTypeSelection = new TypeCompletionItem("", CompletionItemKind.TypeParameter, TypeSlots.Variable,
-                                                       -1, this.variableName, this.variableLineNo);
+        var currTypeSelection = new TypeCompletionItem(
+            "", CompletionItemKind.TypeParameter, TypeSlots.Variable,
+            -1, this.variableName, this.variableLineNo
+        );
         if (this.resolvedCompletion === false) {
             this.submitCanceledPrediction(currTypeSelection);
             this.resolvedCompletion = true;
@@ -308,7 +326,6 @@ function findFunctionInferenceDataForActiveFilePos(pos: Position): FunctionInfer
             }
         }
     }
-
     return undefined;
 }
 
@@ -340,7 +357,8 @@ function findVariableInferenceDataForActiveFilePos(line: TextLine): VariableInfe
                 for (const fileVar of annotationData.variables) {
                     const lineNumber = line.lineNumber + 1;
 
-                    if (isWithinLineBounds(lineNumber, fileVar.lines) && fileVar.name == variableName) {
+                    if (isWithinLineBounds(lineNumber, fileVar.lines) &&
+                        fileVar.name === variableName) {
                         return fileVar;
                     }
                 }

@@ -6,4 +6,7 @@ export const ERROR_MESSAGES = {
     'emptyFile': "Cannot infer type annotations for empty files.",
     'emptyPayload': "The received response was empty.",
     'connectionError': "Could not connect to the server."
-}
+};
+
+export const TELEMETRY_REQUEST_MESSAGE = "Would you like to share accepted " +
+    "type predictions with us for research purposes?";

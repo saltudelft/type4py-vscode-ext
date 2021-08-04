@@ -1,5 +1,6 @@
 # VSCode Extension of Type4Py
 [![vsm-version](https://img.shields.io/visual-studio-marketplace/v/saltud.type4py?style=flat&label=VS%20Marketplace&logo=visual-studio-code)](https://marketplace.visualstudio.com/items?itemName=saltud.type4py)
+![GH-workflow](https://github.com/saltudelft/type4py-vscode-ext/actions/workflows/extension_test.yaml/badge.svg)
 
 This extension provides machine learning-based type autocompletion for Python, which assists developers to gradually add type annotations to their existing codebases.
 
@@ -78,6 +79,10 @@ External contributions are welcome such as bug fixes and improvements! Feel free
 3. Open `src/extension.ts` in VSCode, open *"Select Environment"*, and run in *"VS Code Extension Development"*
 4. Open a Python source code file, open the Command Palette, and run the *"Type4Py: Infer type annotations"* command. 
 5. After a success message pops up, fill function annotations as usual (e.g. `x:` or `def ...) ->`), and type completion items will show up (if available)
+
+## Running tests
+1. Make sure that all instances of VSCode are closed on the machine.
+2. Run `npm run test-compile`
 
 # Roadmap
 Here are the desirable features for future releases.

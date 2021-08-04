@@ -22,7 +22,7 @@ export interface InferApiParamPredictionMapping {
 /**
  * Interface to represent a variable map to track line numbers (first and last)
  */
-export type InferApiVarLocations = { [key: string]: Array<Array<number>> }
+export type InferApiVarLocations = { [key: string]: Array<Array<number>> };
 
 /** Composable interfaces */
 
@@ -214,7 +214,7 @@ function extractVariableInferData(
             const varData: VariableInferData = {
                 name: key,
                 annotations: predictions[key].map((val) => {
-                    return val[0]
+                    return val[0];
                 }),
                 lines: [locs[key][0][0], locs[key][1][0]]
             };

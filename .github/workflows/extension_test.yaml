@@ -1,0 +1,29 @@
+name: Type4Py VSCE
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - run: npm install
+    - run: xvfb-run -a npm run test-compile
+      if: runner.os == 'Linux'
+    - run: npm run test-compile
+      if: runner.os != 'Linux'

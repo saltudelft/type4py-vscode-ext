@@ -2,6 +2,8 @@
 All notable changes to the [Type4Py's VSCode extension](https://github.com/saltudelft/type4py-vscode-ext) will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Making the extension compatible with the Web version of VSCode ([#21](https://github.com/saltudelft/type4py-vscode-ext/pull/21)).
+- Adding unit tests and integration testing ([#19](https://github.com/saltudelft/type4py-vscode-ext/pull/19)).
 
 ## [0.1.5] - 2021-08-02
 ### Added

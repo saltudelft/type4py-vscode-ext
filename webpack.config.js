@@ -22,7 +22,9 @@ const config = {
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
-    extensions: ['.ts', '.js']
+    mainFields: ['main'],
+    extensions: ['.ts', '.js'],
+    //fallback: {'node-fetch': false}
   },
   module: {
     rules: [
@@ -36,6 +38,9 @@ const config = {
         ]
       }
     ]
+  },
+  stats: {
+    warningsFilter: "Module not found: Error: Can't resolve 'encoding'"
   }
 };
 module.exports = config;

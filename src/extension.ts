@@ -12,11 +12,14 @@ import typestore from './typestore';
 import axios from 'axios';
 import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, INFER_URL_BASE_DEV, TELEMETRY_REQ_TIMEOUT,
          TELEMETRY_URL_BASE, TELEMETRY_URL_BASE_DEV} from './constants';
-import * as fs from 'fs';
 import { ERROR_MESSAGES, TELEMETRY_REQUEST_MESSAGE } from './messages';
 import * as path from 'path';
 import {createHash, randomBytes} from 'crypto';
 import { Type4PyOutputChannel, Type4PyStatusBar } from './ui';
+
+// Dependencies for the web version of the extension
+const fetch = require('node-fetch').default;
+var Url = require('url-parse');
 
 export interface Type4PyApi {
     typestore: typeof typestore
@@ -187,7 +190,7 @@ async function infer(
             // Read file contents
             const currentPath = activeDocument.fileName;
             const fileContents = activeDocument.getText();
-            var inferUrl;
+            var inferUrl: string;
 
             const relativePath = path.parse(vscode.workspace.asRelativePath(currentPath)).base;
             statusBar.updateInProgress();
@@ -203,20 +206,29 @@ async function infer(
                 inferUrl = INFER_URL_BASE_DEV; // Development and testing
             }
 
-            const inferResult = await axios.post<InferApiPayload>(inferUrl, fileContents,
-                { headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT, params:
-                    {
-                        // TODO: check with server side; this can be passed as boolean
-                        //tc: settings.tcEnabled ? 0 : 0,
-                        tc: 0,
-                        fp: settings.fliterPredsEnabled ? 1 : 0,
-                        ai: context.globalState.get("activation_id"),
-                        fh: createHash('sha256').update(currentPath, 'utf8').digest('hex'),
-                        ev: vscode.extensions.getExtension('saltud.type4py')?.packageJSON.version
-                    }
-                }
-            );
-            console.log(inferResult);
+            var inferResult;
+            var req_params = {
+                tc: 0,
+                fp: settings.fliterPredsEnabled ? 1 : 0,
+                ai: context.globalState.get("activation_id"),
+                fh: createHash('sha256').update(currentPath, 'utf8').digest('hex'),
+                ev: vscode.extensions.getExtension('saltud.type4py')?.packageJSON.version
+            };
+            if (vscode.env.uiKind === vscode.UIKind.Desktop) {
+                inferResult = await axios.post<InferApiPayload>(inferUrl, fileContents,
+                    {headers: { "Content-Type": "text/plain" }, timeout: INFER_REQUEST_TIMEOUT, params: req_params});
+                    console.log(inferResult);
+            } else {
+                // For the web version of VS Code
+                const response = await fetch(new Url("./fetch", inferUrl+"/").href, {
+                method: 'POST',
+                body: JSON.stringify(Object.assign({}, {
+                    f: fileContents}, req_params)),
+                    headers: { "Content-Type": "text/plain"},
+                    timeout: INFER_REQUEST_TIMEOUT
+                });
+                inferResult = {data: await response.json()};
+            }
             
             // Check if response is present & report error if not
             if (!inferResult.data.response) {
@@ -267,6 +279,5 @@ async function infer(
                 vscode.window.showErrorMessage(ERROR_MESSAGES.connectionError);
             }                
         }
-
     }
 }

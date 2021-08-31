@@ -67,7 +67,7 @@
 				"workspace.shareAcceptedPredictions": {
 					"type": "boolean",
 					"default": false,
-					"description": "If enabled, accepted type predictions will be shared with us for research purposes and improving our Type4Py model. Note that the value of VSCode Telemetry overrides this setting. Read our privacy statement [here]()."
+					"markdownDescription": "If enabled, accepted type predictions will be shared with us for research purposes and improving our Type4Py model. Note that the value of VSCode Telemetry overrides this setting. Read our privacy statement [here](https://github.com/saltudelft/type4py-vscode-ext/blob/master/PRIVACY.md)."
 				}
 			}
 		}

@@ -39,6 +39,8 @@ This extension provides machine learning-based type autocompletion for Python, w
 
 > **Tip:** You can also enable automatic type inference when opening Python files. To do so, see [settings](#settings).
 
+> **Tip:** The same above steps are also applicable to the web version of the extension.
+
 ## Considerations
 - Do not edit the selected source file after running the Type4Py extension. That is, add the relevant predicted types to the code, save the file and then edit as you wish. We will drop this consideration once the [caching solution](#roadmap) is implemented.
 - Make sure that the selected source file does not have syntax or parse errors before running the extension. In VSCode, Python linters warn about such errors.
@@ -47,7 +49,7 @@ This extension provides machine learning-based type autocompletion for Python, w
 # Installation
 > **NOTE:** Update VSCode before installing the extension.
 
-The latest version of the extension can be installed from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=saltud.type4py).
+The latest version of the extension can be installed from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=saltud.type4py). The extension is also compatible with the **web version** of VSCode.
 
 # Settings
 | Name 	| Description 	| Default 	|
@@ -83,6 +85,14 @@ External contributions are welcome such as bug fixes and improvements! Feel free
 ## Running tests
 1. Make sure that all instances of VSCode are closed on the machine.
 2. Run `npm run test-compile`
+
+## Web version
+To develop and test the web version of the extension, run the following commands at the root of the project:
+```
+npm install && npm run compile-web
+npx vscode-test-web --browserType=chromium --extensionDevelopmentPath=.
+```
+This opens up the VSCode Web at `localhost:3000` with the extension.
 
 # Roadmap
 Here are the desirable features for future releases.

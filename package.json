@@ -26,7 +26,7 @@
 		"typeannotations"
 	],
 	"engines": {
-		"vscode": "^1.58.0"
+		"vscode": "^1.59.0"
 	},
 	"activationEvents": [
 		"*"
@@ -108,13 +108,13 @@
 		"stream-browserify": "^3.0.0",
 		"ts-loader": "^9.2.2",
 		"typescript": "^3.9.7",
-		"url-parse": "^1.5.3",
+		"url-parse": "^1.5.6",
 		"vscode-test": "^1.6.1",
 		"webpack": "^5.38.1",
 		"webpack-cli": "^4.7.0"
 	},
 	"dependencies": {
-		"axios": "^0.21.1",
+		"axios": "^0.21.2",
 		"node-fetch": "^2.6.1"
 	}
 }

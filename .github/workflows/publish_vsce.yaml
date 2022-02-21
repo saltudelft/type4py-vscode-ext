@@ -20,6 +20,9 @@ jobs:
       - name: Install the dependencies
         run: npm i
 
+      - name: Compile the extension
+        run: npm run compile && npm run compile-web
+
       - name: Install vsce
         run: npm i -g vsce
 

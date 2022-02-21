@@ -9,6 +9,7 @@ export class Type4PySettings {
     private _filterPreds = true;
     private _shareAcceptedPreds = false;
     private _autoInfer = false;
+    private _useLocalModel = false;
 
     constructor() {
         workspace.onDidChangeConfiguration(() => {
@@ -33,6 +34,10 @@ export class Type4PySettings {
         return this._autoInfer;
     }
 
+    public get useLocalModel() {
+        return this._useLocalModel;
+    }
+
     public set setShareAcceptedPreds(value: boolean) {
         this._shareAcceptedPreds = value;
     }
@@ -52,6 +57,8 @@ export class Type4PySettings {
             .getConfiguration('workspace').get('shareAcceptedPredictions');
         const autoInfer: boolean | undefined = workspace
             .getConfiguration('workspace').get('autoInferEnabled');
+        const useLocalModel: boolean | undefined = workspace
+            .getConfiguration('workspace').get('localModelEnabled');
         
         // if (tcEnable !== undefined) {
         //     this._tcEnabled = tcEnable;
@@ -67,6 +74,10 @@ export class Type4PySettings {
 
         if (autoInfer !== undefined) {
             this._autoInfer = autoInfer;
+        }
+
+        if (useLocalModel !== undefined) {
+            this._useLocalModel = useLocalModel;
         }
     }
 }

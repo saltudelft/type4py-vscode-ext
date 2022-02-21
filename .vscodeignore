@@ -9,6 +9,15 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
+images/**
+.github/**
+python/**
+DESIGN.MD
+PRIVACY.md
+README.md
+CHANGELOG.md
+
+!images/icon.ico
 
 # Webpack related
 node_modules

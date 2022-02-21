@@ -5,6 +5,8 @@ We do respect our users' privacy and want to clarify that:
 
 With regards to the above-defined statements, to improve our Type4Py model and conduct research, we collect two kinds of telemetry data which are described below.
 
+> **NOTE**: If Type4Py's local model is used, no telemetry data is sent to any external server.
+
 # Telemetry
 ## Prediction requests:
   - **Hashed IP addresses**: Helps to uniquely identify prediction requests and active users. Note that a hashed IP cannot be decoded and makes users anonymous. E.g. `8a0872388f0f1...`

@@ -5,7 +5,8 @@ export const ERROR_MESSAGES = {
     'nonPythonFile': "Cannot infer type annotations for non-Python code files.",
     'emptyFile': "Cannot infer type annotations for empty files.",
     'emptyPayload': "The received response was empty.",
-    'connectionError': "Could not connect to the server."
+    'connectionError': "Could not connect to the server.",
+    'localModelNotDetected': "Could not use the local model. Ensure that Type4Py's Docker container is running." 
 };
 
 export const TELEMETRY_REQUEST_MESSAGE = "Would you like to share accepted " +

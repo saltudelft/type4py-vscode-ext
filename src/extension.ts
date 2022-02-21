@@ -10,7 +10,7 @@ import { paramHintTrigger, returnHintTrigger} from "./pythonData";
 import { Type4PySettings } from './settings';
 import typestore from './typestore';
 import axios from 'axios';
-import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, INFER_URL_BASE_DEV, TELEMETRY_REQ_TIMEOUT,
+import { INFER_REQUEST_TIMEOUT, INFER_URL_BASE, INFER_URL_BASE_DEV, INFER_URL_BASE_LOCAL, TELEMETRY_REQ_TIMEOUT,
          TELEMETRY_URL_BASE, TELEMETRY_URL_BASE_DEV} from './constants';
 import { ERROR_MESSAGES, TELEMETRY_REQUEST_MESSAGE } from './messages';
 import * as path from 'path';
@@ -194,18 +194,21 @@ async function infer(
 
             const relativePath = path.parse(vscode.workspace.asRelativePath(currentPath)).base;
             statusBar.updateInProgress();
-            outputChannel.appendInProgress(relativePath);
-            outputChannel.show();
-
-            // Send request
-            //console.log(`Sending request with TC: ${settings.tcEnabled}`);
-            //console.log(`Sending request with FP: ${settings.fliterPredsEnabled}`)
-            if (context.extensionMode === vscode.ExtensionMode.Production) {
-                inferUrl = INFER_URL_BASE;
+            
+            // Select either local model or central server
+            if (settings.useLocalModel === true) {
+                inferUrl = INFER_URL_BASE_LOCAL;
+                outputChannel.appendInProgress(relativePath, true);
             } else {
-                inferUrl = INFER_URL_BASE_DEV; // Development and testing
+                if (context.extensionMode === vscode.ExtensionMode.Production) {
+                    inferUrl = INFER_URL_BASE;
+                } else {
+                    inferUrl = INFER_URL_BASE_DEV; // Development and testing
+                }
+                outputChannel.appendInProgress(relativePath, false);
             }
-
+            outputChannel.show();
+            
             var inferResult;
             var req_params = {
                 tc: 0,
@@ -276,7 +279,11 @@ async function infer(
             console.error(error);
             if (error.message) {
                 statusBar.updateInProgressWithErrors();
-                vscode.window.showErrorMessage(ERROR_MESSAGES.connectionError);
+                if (settings.useLocalModel == true) {
+                    vscode.window.showErrorMessage(ERROR_MESSAGES.localModelNotDetected);
+                } else {
+                    vscode.window.showErrorMessage(ERROR_MESSAGES.connectionError);
+                }
             }                
         }
     }

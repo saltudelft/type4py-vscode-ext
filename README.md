@@ -20,9 +20,9 @@ This extension provides machine learning-based type autocompletion for Python, w
 
 # Core Features
 - **Machine learning**-based type prediction (powered by [Type4Py](https://github.com/saltudelft/type4py))
+- It can be used with a **local model** on your machine (No data sharing) 
 - Improved **autocompletion** for Python type annotations (based on [Python Type Hint](https://github.com/njqdev/vscode-python-typehint))
-- Type autocompletion for **parameters** and **return types** of functions.
-- Type autocompletion for module, class, and local **variables**.
+- Type autocompletion for **parameters**, **return types** of functions, and **variables**.
 - Simple, fairly fast and easy to use.
 
 # Usage
@@ -36,6 +36,8 @@ This extension provides machine learning-based type autocompletion for Python, w
 4. After the completion of your request, you can now start adding predicted type annotations to your code, similar to the [Quick Start](#quick-start) example above.
 
 > **Tip:** At the bottom left of VSCode, click on the status bar of Type4py to see the extension's logs and errors.
+
+> **Tip:** To use the local model for type inference instead of our server, see [settings](#settings).
 
 > **Tip:** You can also enable automatic type inference when opening Python files. To do so, see [settings](#settings).
 
@@ -54,6 +56,7 @@ The latest version of the extension can be installed from the [Visual Studio Mar
 # Settings
 | Name 	| Description 	| Default 	|
 |---	|---	|---	|
+| workspace.localModelEnabled | If enabled, it uses Type4Py's local model on your machine. NOTE THAT you need to pull and run Type4Py's Docker image first. See [here](https://github.com/saltudelft/type4py/wiki/Type4Py's-Local-Model) for more info. | false |
 | workspace.autoInferEnabled | If enabled, it automatically infers type annotations when opening a Python source file. Note that automatic inference works only once for a newly opened file. | false |
 | workspace.filterPredictionsEnabled 	| If enabled, based on the file's imported names, irrelevent type predictions will be filtered out. Disable this setting if you would like to get all the predicted types regardless of relevancy. 	| true 	|
 | workspace.shareAcceptedPredictions | If enabled, accepted type predictions will be shared with us for research purposes and improving our Type4Py model. Note that the value of VSCode Telemetry overrides this setting. Read our privacy statement [here](PRIVACY.md). | false
@@ -99,7 +102,6 @@ Here are the desirable features for future releases.
 - Implementing a caching solution to preserve type predictions when source files change.
 - Enabling the type-checking process for the Type4Py's predictions using [mypy](https://github.com/python/mypy), preferably at the client-side.
 - Fine-tuning the (pre-trained) Type4Py model on users' projects to learn project-specific types.
-- Releasing a local version of the Type4Py model and its pipeline that can be queried on users' machines.
 
 # Contributors
 - Amir M. Mir (@mir-am)

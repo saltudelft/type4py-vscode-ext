@@ -13,9 +13,9 @@ export class Type4PyOutputChannel {
         context.subscriptions.push(this.outputChannel);
     }
 
-    public appendInProgress(fileName: string) {
+    public appendInProgress(fileName: string, isLocalModelUsed: boolean) {
         this.outputChannel.appendLine(
-            `[${new Date().toLocaleString()}][${fileName}] Inferring types...`
+            `[${new Date().toLocaleString()}][${fileName}] Inferring types using ${(isLocalModelUsed) ? ('local model') : ('central server')}...`
         );
     }
 

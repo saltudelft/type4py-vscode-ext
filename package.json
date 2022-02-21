@@ -54,6 +54,11 @@
 		"configuration": {
 			"title": "Type4Py",
 			"properties": {
+				"workspace.localModelEnabled": {
+					"type": "boolean",
+					"default": false,
+					"markdownDescription": "If enabled, it uses Type4Py's local model on your machine. NOTE THAT you need to pull and run Type4Py's Docker image first. See [here](https://github.com/saltudelft/type4py/wiki/Type4Py's-Local-Model) for more info."
+				},
 				"workspace.autoInferEnabled": {
 					"type": "boolean",
 					"default": false,

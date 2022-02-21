@@ -2,6 +2,8 @@
 All notable changes to the [Type4Py's VSCode extension](https://github.com/saltudelft/type4py-vscode-ext) will be documented in this file. The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- A setting, `workspace.localModelEnabled`, to query the local model of Type4Py on users' machines for type inference ([#24](https://github.com/saltudelft/type4py-vscode-ext/pull/24)).
 
 ## [0.1.6] - 2021-09-01
 ### Added

@@ -80,7 +80,7 @@
 	"scripts": {
 		"package": "vsce package",
 		"publish": "vsce publish",
-		"vscode:prepublish": "webpack --mode production",
+		"vscode:prepublish": "npm run package-web && webpack --mode production",
 		"compile": "webpack --mode none",
 		"watch": "webpack --mode none --watch",
 		"test": "tsc -p . && cp -r ./test/res ./out/test && node out/test/runTest.js",

@@ -115,8 +115,8 @@
 		"typescript": "^3.9.7",
 		"url-parse": "^1.5.6",
 		"vscode-test": "^1.6.1",
-		"webpack": "^5.38.1",
-		"webpack-cli": "^4.7.0"
+		"webpack": "^5.70.0",
+		"webpack-cli": "^4.9.2"
 	},
 	"dependencies": {
 		"axios": "^0.21.2",
